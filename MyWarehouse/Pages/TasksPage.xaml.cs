@@ -8,44 +8,15 @@ using System.Windows.Media;
 
 namespace MyWarehouse.Pages
 {
-    public class TaskViewModel
-    {
-        public DeliveryTask Model { get; set; }
-        public int Id => Model.IdDeliveryTask;
-        public string ProductName => Model.Product?.Name ?? "";
-        public string ClientName => Model.Client?.Name ?? "";
-        public int ProductQuantity => Model.ProductQuantity;
-        public string StatusName => Model.TaskStatus?.Name ?? Model.TaskStatusId.ToString();
-        public string CreatedAtString => Model.CreatedAt.ToString("");
-
-        public Brush StatusColor
-        {
-            get
-            {
-                return Model.TaskStatusId switch
-                {
-                    (int)DeliveryTaskStatus.NotTaken => Brushes.Gray,
-                    (int)DeliveryTaskStatus.InProgress => Brushes.Orange,
-                    (int)DeliveryTaskStatus.Completed => Brushes.Green,
-                    (int)DeliveryTaskStatus.Rejected => Brushes.Red,
-                    _ => Brushes.Gray,
-                };
-            }
-        }
-
-        // For couriers: show action button (Take / Complete). For others: hide
-        public bool ActionVisible { get; set; }
-        public string ActionLabel => Model.TaskStatusId == (int)DeliveryTaskStatus.NotTaken ? "Взять" : "Завершить";
-    }
 
     /// <summary>
     /// Interaction logic for TaskPage.xaml
     /// </summary>
-    public partial class TaskPage : Page
+    public partial class TasksPage : Page
     {
         private readonly AppDbContext db = new();
 
-        public TaskPage()
+        public TasksPage()
         {
             InitializeComponent();
             DataContext = this;
@@ -95,4 +66,36 @@ namespace MyWarehouse.Pages
 
         }
     }
+
+    public class TaskViewModel
+    {
+        public DeliveryTask Model { get; set; }
+        public int Id => Model.IdDeliveryTask;
+        public string ProductName => Model.Product?.Name ?? "";
+        public string ClientName => Model.Client?.Name ?? "";
+        public int ProductQuantity => Model.ProductQuantity;
+        public string StatusName => Model.TaskStatus?.Name ?? Model.TaskStatusId.ToString();
+        public string CreatedAtString => Model.CreatedAt.ToString("");
+
+        public Brush StatusColor
+        {
+            get
+            {
+                return Model.TaskStatusId switch
+                {
+                    (int)DeliveryTaskStatus.NotTaken => Brushes.Gray,
+                    (int)DeliveryTaskStatus.InProgress => Brushes.Orange,
+                    (int)DeliveryTaskStatus.Completed => Brushes.Green,
+                    (int)DeliveryTaskStatus.Rejected => Brushes.Red,
+                    _ => Brushes.Gray,
+                };
+            }
+        }
+
+        // For couriers: show action button (Take / Complete). For others: hide
+        public bool ActionVisible { get; set; }
+        public string ActionLabel => Model.TaskStatusId == (int)DeliveryTaskStatus.NotTaken ? "Взять" : "Завершить";
+    }
+
+
 }

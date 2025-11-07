@@ -13,7 +13,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="180" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -69,23 +69,20 @@
                 <Button
                     Background="Transparent"
                     BorderBrush="Transparent"
-                    Click="Tasks_Click"
-                    Content="Задачи" />
+                    Click="Products_Click"
+                    Content="Товары" />
+
                 <Button
                     Background="Transparent"
                     BorderBrush="Transparent"
-                    Click="Products_Click"
-                    Content="Товары" />
+                    Click="Tasks_Click"
+                    Content="Задачи" />
+
                 <Button
                     Background="Transparent"
                     BorderBrush="Transparent"
                     Click="Clients_Click"
                     Content="Клиенты" />
-                <Button
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    Click="Stocks_Click"
-                    Content="Склады / Запасы" />
 
                 <Button
                     Background="Transparent"
@@ -109,9 +106,26 @@
         </StackPanel>
 
         <!--  Main content: use Frame to host Pages  -->
-        <StackPanel Grid.Column="1" d:Background="#F1F1F1">
-            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
-        </StackPanel>
+        <Grid Grid.Column="1" d:Background="#F1F1F1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                x:Name="PageTitleTextBlock"
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                d:Text="Заголовок страницы"
+                FontWeight="Bold"
+                Style="{StaticResource MaterialDesignTitleLargeTextBlock}" />
+
+            <Frame
+                x:Name="MainFrame"
+                Grid.Row="1"
+                Margin="10"
+                NavigationUIVisibility="Hidden" />
+        </Grid>
 
     </Grid>
 </Page>

@@ -18,13 +18,20 @@ namespace MyWarehouse.Pages
         {
             InitializeComponent();
             UserFirstNameTextBlock.Text = UserSession.CurrentUser.FirstName;
+            MainFrame.Navigated += (s, e) =>
+            {
+                if (e.Content is Page page)
+                {
+                    PageTitleTextBlock.Text = page.Title;
+                }
+            };
 
             ShowProductsView();
         }
 
         private void ShowProductsView()
         {
-            MainFrame.Navigate(new ProductPage());
+            MainFrame.Navigate(new ProductsPage());
         }
 
         private void AdminPanel_Click(object sender, RoutedEventArgs e)
@@ -34,7 +41,7 @@ namespace MyWarehouse.Pages
 
         private void Tasks_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new TaskPage());
+            MainFrame.Navigate(new TasksPage());
         }
 
         private void Products_Click(object sender, RoutedEventArgs e)
@@ -51,5 +58,7 @@ namespace MyWarehouse.Pages
         {
             MessageBox.Show("Открыть склады/запасы.", "Склады", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+
     }
 }

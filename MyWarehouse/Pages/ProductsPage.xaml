@@ -1,0 +1,169 @@
+﻿<Page
+    x:Class="MyWarehouse.Pages.ProductsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MyWarehouse.Pages"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Товары на складе"
+    d:Background="#FFF7F8FA"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <!--  фиктивные данные только для дизайнера  -->
+        <x:Array x:Key="DesignProducts" Type="{x:Type local:ProductViewModel}">
+            <local:ProductViewModel
+                Name="Стеклянная ваза"
+                Category="Декор"
+                IsFragile="True"
+                IsWaterSensitive="False"
+                QuantityName="шт."
+                QuantityTotal="10"
+                SKU="VZ-001"
+                WeightTotal="2.3" />
+            <local:ProductViewModel
+                Name="Металлическая стойка"
+                Category="Оборудование"
+                IsFragile="False"
+                IsWaterSensitive="False"
+                QuantityName="шт."
+                QuantityTotal="3"
+                SKU="ST-002"
+                WeightTotal="45" />
+        </x:Array>
+    </Page.Resources>
+
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ItemsControl d:ItemsSource="{StaticResource DesignProducts}" ItemsSource="{Binding Products}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Margin="-4" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <materialDesign:Card
+                        Width="380"
+                        Margin="4"
+                        Style="{StaticResource MaterialDesignOutlinedCard}">
+                        <StackPanel Margin="12">
+                            <!--  Название товара и особенности в одной линии  -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!--  Название товара  -->
+                                <TextBlock
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Style="{StaticResource MaterialDesignTitleMediumTextBlock}"
+                                    Text="{Binding Name}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
+
+                                <!--  Особенности  -->
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <materialDesign:PackIcon
+                                        Width="24"
+                                        Height="24"
+                                        Margin="2,0"
+                                        Foreground="Orange"
+                                        Kind="GlassFragile"
+                                        ToolTip="Хрупкий"
+                                        Visibility="{Binding IsFragile, Converter={StaticResource BoolToVis}}" />
+                                    <materialDesign:PackIcon
+                                        Width="24"
+                                        Height="24"
+                                        Margin="2,0"
+                                        Foreground="Blue"
+                                        Kind="WaterAlert"
+                                        ToolTip="Боится воды"
+                                        Visibility="{Binding IsWaterSensitive, Converter={StaticResource BoolToVis}}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!--  Артикул  -->
+                                    <TextBlock
+                                        Grid.Row="0"
+                                        Margin="0,4,0,0"
+                                        Foreground="Gray"
+                                        Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                        Text="{Binding SKU}" />
+
+                                    <!--  Категория  -->
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Margin="0,4,0,0"
+                                        Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                        <Run Text="Категория:" />
+                                        <Run Text="{Binding Category}" />
+                                    </TextBlock>
+
+                                    <!--  Общий вес  -->
+                                    <TextBlock Grid.Row="2" Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                        <Run Text="Общий вес:" />
+                                        <Run FontWeight="SemiBold" Text="{Binding WeightTotal, StringFormat={}{0:N2}}" />
+                                        <Run Text="кг" />
+                                    </TextBlock>
+
+                                </Grid>
+
+                                <!--  Количество  -->
+                                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.ColumnSpan="2"
+                                        Style="{StaticResource MaterialDesignTitleMediumTextBlock}">
+                                        <Run Text="Всего:" />
+                                    </TextBlock>
+
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource MaterialDesignTitleSmallTextBlock}">
+                                        <Run Text="{Binding QuantityTotal}" />
+                                        <Run Text="{Binding QuantityName}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+
+                            <!--  Кнопка подробнее  -->
+                            <Button
+                                Margin="0,12,0,0"
+                                Click="DetailsButton_Click"
+                                Content="Подробнее"
+                                Style="{StaticResource MaterialDesignOutlinedButton}" />
+
+                        </StackPanel>
+                    </materialDesign:Card>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
+</Page>
