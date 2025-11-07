@@ -59,6 +59,9 @@ namespace MyWarehouse.Pages
             MessageBox.Show("Открыть склады/запасы.", "Склады", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-
+        private void MainFrame_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            MessageBox.Show("Загрузка завершена.", "Навигация", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }

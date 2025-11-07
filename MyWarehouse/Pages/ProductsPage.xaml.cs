@@ -4,6 +4,7 @@ using MyWarehouse.Models.Entities;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -22,17 +23,15 @@ namespace MyWarehouse.Pages
         {
             InitializeComponent();
             DataContext = this;
-
-            LoadProducts();
         }
 
-        private void LoadProducts()
+        private async Task LoadProducts()
         {
-            var products = db.CURS_Products
+            var products = await db.CURS_Products
                 .Include(p => p.Category)
                 .Include(p => p.Stocks)
                 .Include(p => p.Unit)
-                .ToList();
+                .ToListAsync();
 
             foreach (var product in products)
             {
@@ -61,9 +60,19 @@ namespace MyWarehouse.Pages
                 NavigationService.Navigate(new ProductPage(product.Id));
             }
         }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+           await LoadProducts();
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Products.Clear();
+        }
     }
 
-    public record ProductViewModel
+    public class ProductViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

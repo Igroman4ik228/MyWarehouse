@@ -4,11 +4,238 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MyWarehouse.Pages"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="ProductPage"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    Title="Детали товара"
+    d:Background="White"
+    d:DesignHeight="600"
+    d:DesignWidth="900"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
 
-    <Grid />
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <local:ProductDetailViewModel
+            x:Key="DesignProduct"
+            Name="Стеклянная ваза"
+            Width="20"
+            Height="15"
+            Category="Декор"
+            Description="Красивая стеклянная ваза для цветов и декора."
+            IsFragile="True"
+            IsWaterSensitive="False"
+            Length="30"
+            SKU="VZ-001"
+            Weight="0.23">
+            <local:ProductDetailViewModel.Stocks>
+                <local:StockViewModel
+                    ConstraintsDisplay="50.00/40.00/30.00/100.00"
+                    LocationDetails="ID:101"
+                    LocationDisplay="Склад A / Полка 1 / Ячейка 3"
+                    QuantityDisplay="5 / 10" />
+                <local:StockViewModel
+                    ConstraintsDisplay="60.00/50.00/40.00/120.00"
+                    LocationDetails="ID:202"
+                    LocationDisplay="Склад B / Полка 2 / Ячейка 1"
+                    QuantityDisplay="3 / 10" />
+            </local:ProductDetailViewModel.Stocks>
+        </local:ProductDetailViewModel>
+    </Page.Resources>
+
+    <Grid Margin="12" d:DataContext="{StaticResource DesignProduct}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Header  -->
+        <DockPanel
+            Grid.Row="0"
+            Margin="0,0,0,8"
+            LastChildFill="True">
+
+            <StackPanel
+                HorizontalAlignment="Right"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="8,0,0,0"
+                    Click="RefreshButton_Click"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    Обновить
+                </Button>
+                <Button
+                    Margin="8,0,0,0"
+                    Click="CloseButton_Click"
+                    Style="{StaticResource MaterialDesignFlatMidBgButton}">
+                    Закрыть
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <!--  Main content  -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="340" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Left: Image + Highlights  -->
+            <materialDesign:Card Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedCard}">
+                <StackPanel Margin="12">
+                    <!--  Image placeholder
+                    <Border
+                        Height="200"
+                        Background="#FFF0F0F0"
+                        BorderBrush="#FFE0E0E0"
+                        BorderThickness="1"
+                        CornerRadius="6">
+                        <Grid>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="#FF9AA4AD">
+                                Изображение товара
+                            </TextBlock>
+                        </Grid>
+                    </Border>-->
+
+                    <TextBlock
+                        Style="{StaticResource MaterialDesignHeadlineLargeTextBlock}"
+                        Text="{Binding Name}"
+                        TextTrimming="CharacterEllipsis" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        Foreground="Gray"
+                        Text="{Binding SKU, StringFormat=Артикул: {0}}" />
+
+                    <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            Margin="0,0,6,0"
+                            Kind="Tag" />
+                        <StackPanel>
+                            <TextBlock Foreground="Gray" Text="Категория" />
+                            <TextBlock FontWeight="SemiBold" Text="{Binding Category}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            Margin="0,0,6,0"
+                            Kind="ScaleBalance" />
+                        <StackPanel>
+                            <TextBlock Foreground="Gray" Text="Вес (за ед.)" />
+                            <TextBlock FontWeight="SemiBold" Text="{Binding Weight, StringFormat={}{0:N2}, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            Margin="0,0,6,0"
+                            Kind="CubeOutline" />
+                        <StackPanel>
+                            <TextBlock Foreground="Gray" Text="Размеры (Д/Ш/В)" />
+                            <TextBlock FontWeight="SemiBold">
+                                <Run Text="" />
+                                <Run Text="{Binding Length, StringFormat={}{0:N2}, Mode=OneWay}" />
+                                <Run Text=" / " />
+                                <Run Text="{Binding Width, StringFormat={}{0:N2}, Mode=OneWay}" />
+                                <Run Text=" / " />
+                                <Run Text="{Binding Height, StringFormat={}{0:N2}, Mode=OneWay}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            Margin="0,0,6,0"
+                            Foreground="Orange"
+                            Kind="AlertOutline"
+                            Visibility="{Binding IsFragile, Converter={StaticResource BoolToVis}}" />
+                        <materialDesign:PackIcon
+                            Width="24"
+                            Height="24"
+                            Margin="0,0,6,0"
+                            Foreground="Blue"
+                            Kind="Water"
+                            Visibility="{Binding IsWaterSensitive, Converter={StaticResource BoolToVis}}" />
+                        <TextBlock
+                            Margin="6,0,0,0"
+                            VerticalAlignment="Center"
+                            Foreground="Gray"
+                            Text="Особенности" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Margin="0,12,0,0"
+                        Foreground="Gray"
+                        Text="Описание:" />
+                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
+
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!--  Right: Details and stocks  -->
+            <StackPanel Grid.Column="2" Orientation="Vertical">
+                <materialDesign:Card Style="{StaticResource MaterialDesignOutlinedCard}">
+                    <StackPanel Margin="12">
+                        <TextBlock Style="{StaticResource MaterialDesignTitleMediumTextBlock}" Text="Места хранения" />
+                        <TextBlock Margin="0,4,0,8" Foreground="Gray">Показаны текущие количества и ограничения. Количество / Максимум, ограничения разделены символом '/'.</TextBlock>
+
+                        <ListView Margin="0,8,0,0" ItemsSource="{Binding Stocks}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="160" />
+                                            <ColumnDefinition Width="200" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock FontWeight="SemiBold" Text="{Binding LocationDisplay}" />
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="Gray"
+                                                Text="{Binding LocationDetails}" />
+                                        </StackPanel>
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="{Binding QuantityDisplay}" />
+
+                                        <StackPanel Grid.Column="2" Orientation="Vertical">
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="Gray"
+                                                Text="Ограничения (Д/Ш/В/Вес):" />
+                                            <TextBlock FontWeight="SemiBold" Text="{Binding ConstraintsDisplay}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                    </StackPanel>
+                </materialDesign:Card>
+
+            </StackPanel>
+
+        </Grid>
+
+    </Grid>
 </Page>

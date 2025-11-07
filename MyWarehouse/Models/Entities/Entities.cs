@@ -36,39 +36,27 @@ public class Product
     [StringLength(1000, ErrorMessage = "Описание не может превышать 1000 символов")]
     public string? Description { get; set; }
 
-
     public int CategoryId { get; set; }
-
 
     public int UnitId { get; set; }
 
-
-    public int ManufacturerId { get; set; }
-
-
     [Range(0, double.MaxValue, ErrorMessage = "Вес не может быть отрицательным")]
     public decimal Weight { get; set; }
-
 
     [StringLength(50, ErrorMessage = "SKU не может превышать 50 символов")]
     public string SKU { get; set; } = string.Empty;
 
     public DateTime? ExpirationDate { get; set; }
 
-
     public bool IsFragile { get; set; }
 
-
     public bool IsWaterSensitive { get; set; }
-
 
     [Range(0, double.MaxValue, ErrorMessage = "Длина не может быть отрицательной")]
     public decimal Length { get; set; }
 
-
     [Range(0, double.MaxValue, ErrorMessage = "Ширина не может быть отрицательной")]
     public decimal Width { get; set; }
-
 
     [Range(0, double.MaxValue, ErrorMessage = "Высота не может быть отрицательной")]
     public decimal Height { get; set; }

@@ -1,5 +1,7 @@
-﻿using MyWarehouse.Models.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using MyWarehouse.Models.Entities;
 using MyWarehouse.Services;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -19,7 +21,7 @@ namespace MyWarehouse.Pages
             LoginBox.Focus();
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorTextBlock.Visibility = Visibility.Collapsed;
 
@@ -33,9 +35,9 @@ namespace MyWarehouse.Pages
             }
 
 
-            var user = db.CURS_Users.FirstOrDefault(u => u.Login == login);
+            var user = await Task.Run(() => db.CURS_Users.FirstOrDefaultAsync(u => u.Login == login));
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password)) 
             {
                 ShowError("Неверный логин или пароль.");
                 PasswordBox.Clear();
