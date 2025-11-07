@@ -1,0 +1,121 @@
+﻿<Page
+    x:Class="MyWarehouse.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MyWarehouse.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="HomePage"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Left menu  -->
+        <Border
+            Grid.Column="0"
+            Margin="7"
+            Background="#FF2B3945"
+            CornerRadius="8">
+            <StackPanel Margin="12" VerticalAlignment="Top">
+                <Viewbox
+                    Width="90"
+                    Height="90"
+                    Margin="0,6,0,8"
+                    HorizontalAlignment="Center">
+                    <Canvas Width="100" Height="100">
+                        <Path
+                            Data="M10,40 L50,10 L90,40 L90,85 L10,85 Z"
+                            Fill="#FFECB365"
+                            Stroke="#FFB77A1A"
+                            StrokeThickness="2" />
+                        <Rectangle
+                            Canvas.Left="24"
+                            Canvas.Top="48"
+                            Width="16"
+                            Height="28"
+                            Fill="#FFF2C07E"
+                            Stroke="#FFB77A1A" />
+                        <Rectangle
+                            Canvas.Left="44"
+                            Canvas.Top="48"
+                            Width="16"
+                            Height="28"
+                            Fill="#FFF2C07E"
+                            Stroke="#FFB77A1A" />
+                        <Rectangle
+                            Canvas.Left="64"
+                            Canvas.Top="48"
+                            Width="16"
+                            Height="28"
+                            Fill="#FFF2C07E"
+                            Stroke="#FFB77A1A" />
+                    </Canvas>
+                </Viewbox>
+
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="18"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Text="Управление складом"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+
+                <Separator Margin="0,8,0,8" />
+
+                <Button Click="Tasks_Click" Style="{StaticResource MenuButtonStyle}">Задачи</Button>
+                <Button Click="Products_Click" Style="{StaticResource MenuButtonStyle}">Товары</Button>
+                <Button Click="Clients_Click" Style="{StaticResource MenuButtonStyle}">Клиенты</Button>
+                <Button Click="Stocks_Click" Style="{StaticResource MenuButtonStyle}">Склады / Запасы</Button>
+
+                <Button
+                    Click="AdminPanel_Click"
+                    Style="{StaticResource MenuButtonStyle}"
+                    Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVis}}">
+                    Админ панель
+                </Button>
+
+                <StackPanel Margin="0,16,0,0" VerticalAlignment="Bottom">
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="#FFC6D0DA"
+                        Text="Текущий пользователь:" />
+                    <TextBlock
+                        x:Name="UserFirstNameTextBlock"
+                        FontSize="13"
+                        FontWeight="Bold"
+                        Foreground="White" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!--  Main content: use Frame to host Pages  -->
+        <Border
+            Grid.Column="1"
+            Margin="7"
+            Background="#FFF7F8FA"
+            CornerRadius="8">
+            <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
+        </Border>
+    </Grid>
+</Page>

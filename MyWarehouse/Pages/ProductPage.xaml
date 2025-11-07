@@ -1,0 +1,123 @@
+﻿<Page
+    x:Class="MyWarehouse.Pages.ProductPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MyWarehouse.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="ProductPage"
+    d:Background="#FFF7F8FA"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer Margin="12" VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <TextBlock
+                Margin="6"
+                FontSize="22"
+                FontWeight="Bold"
+                Foreground="#FF1F2A37"
+                Text="Товары" />
+
+            <ItemsControl x:Name="ProductsControl" ItemsSource="{Binding Products}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Width="400"
+                            Height="150"
+                            Margin="8"
+                            Background="White"
+                            BorderBrush="#FFE6E9EE"
+                            BorderThickness="1"
+                            CornerRadius="8">
+                            <Grid Margin="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="90" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="14"
+                                        FontWeight="SemiBold"
+                                        Foreground="#FF1F2A37"
+                                        Text="{Binding Name}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        FontSize="12"
+                                        Foreground="#FF8B98A2"
+                                        Text="{Binding SKU}" />
+
+                                    <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="#FF5A6671"
+                                            Text="Категория: " />
+                                        <TextBlock
+                                            FontSize="12"
+                                            FontWeight="Bold"
+                                            Foreground="#FF3D4852"
+                                            Text="{Binding Category}" />
+                                    </StackPanel>
+
+                                    <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="#FF5A6671"
+                                            Text="Вес: " />
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="#FF3D4852"
+                                            Text="{Binding Weight}" />
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="#FF3D4852"
+                                            Text=" кг" />
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                                <StackPanel
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="#FF8B98A2"
+                                        Text="На складе" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="20"
+                                        FontWeight="Bold"
+                                        Foreground="#FF2B8AFF"
+                                        Text="{Binding StockTotal}" />
+
+                                    <Button
+                                        Width="74"
+                                        Height="28"
+                                        Margin="0,12,0,0"
+                                        HorizontalAlignment="Center"
+                                        Background="#FF2B8AFF"
+                                        Click="ViewButton_Click"
+                                        Content="Просмотр"
+                                        FontWeight="SemiBold"
+                                        Foreground="White"
+                                        Tag="{Binding Id}" />
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
