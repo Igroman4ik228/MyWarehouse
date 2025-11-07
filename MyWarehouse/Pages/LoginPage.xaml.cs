@@ -37,7 +37,7 @@ namespace MyWarehouse.Pages
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
-                ShowError("Неверное логин или пароль.");
+                ShowError("Неверный логин или пароль.");
                 PasswordBox.Clear();
                 PasswordBox.Focus();
                 return;

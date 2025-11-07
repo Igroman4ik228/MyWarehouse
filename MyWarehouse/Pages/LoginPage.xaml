@@ -16,71 +16,60 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <Border
-            Grid.Column="0"
-            Margin="8"
-            Background="#FF2B3945"
-            CornerRadius="8">
-            <Grid>
-                <StackPanel
-                    Margin="16"
+        <Grid Grid.Column="0" Background="#FF2B3945">
+            <StackPanel
+                Margin="16"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <Viewbox
+                    Width="120"
+                    Height="120"
+                    Margin="0,0,0,16">
+                    <Canvas Width="100" Height="100">
+                        <Path
+                            Data="M10,40 L50,10 L90,40 L90,85 L10,85 Z"
+                            Fill="#FFECB365"
+                            Stroke="#FFB77A1A"
+                            StrokeThickness="2" />
+                        <Rectangle
+                            Canvas.Left="24"
+                            Canvas.Top="48"
+                            Width="16"
+                            Height="28"
+                            Fill="#FFF2C07E"
+                            Stroke="#FFB77A1A" />
+                        <Rectangle
+                            Canvas.Left="44"
+                            Canvas.Top="48"
+                            Width="16"
+                            Height="28"
+                            Fill="#FFF2C07E"
+                            Stroke="#FFB77A1A" />
+                        <Rectangle
+                            Canvas.Left="64"
+                            Canvas.Top="48"
+                            Width="16"
+                            Height="28"
+                            Fill="#FFF2C07E"
+                            Stroke="#FFB77A1A" />
+                    </Canvas>
+                </Viewbox>
+
+                <TextBlock
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                    <Viewbox
-                        Width="120"
-                        Height="120"
-                        Margin="0,0,0,16">
-                        <Canvas Width="100" Height="100">
-                            <Path
-                                Data="M10,40 L50,10 L90,40 L90,85 L10,85 Z"
-                                Fill="#FFECB365"
-                                Stroke="#FFB77A1A"
-                                StrokeThickness="2" />
-                            <Rectangle
-                                Canvas.Left="24"
-                                Canvas.Top="48"
-                                Width="16"
-                                Height="28"
-                                Fill="#FFF2C07E"
-                                Stroke="#FFB77A1A" />
-                            <Rectangle
-                                Canvas.Left="44"
-                                Canvas.Top="48"
-                                Width="16"
-                                Height="28"
-                                Fill="#FFF2C07E"
-                                Stroke="#FFB77A1A" />
-                            <Rectangle
-                                Canvas.Left="64"
-                                Canvas.Top="48"
-                                Width="16"
-                                Height="28"
-                                Fill="#FFF2C07E"
-                                Stroke="#FFB77A1A" />
-                        </Canvas>
-                    </Viewbox>
+                    Foreground="White"
+                    Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                    Text="Управление складом" />
+                <TextBlock
+                    Margin="0,6,0,0"
+                    HorizontalAlignment="Center"
+                    Foreground="#FFC6D0DA"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="Учёт • Приём • Отгрузка" />
+            </StackPanel>
+        </Grid>
 
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        FontSize="20"
-                        FontWeight="Bold"
-                        Foreground="White"
-                        Text="Управление складом" />
-                    <TextBlock
-                        Margin="0,6,0,0"
-                        HorizontalAlignment="Center"
-                        FontSize="12"
-                        Foreground="#FFC6D0DA"
-                        Text="Учёт • Приём • Отгрузка" />
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <Border
-            Grid.Column="1"
-            Margin="8"
-            Background="White"
-            CornerRadius="8">
+        <Border Grid.Column="1" d:Background="#F1F1F1">
             <Grid Margin="24" VerticalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -88,50 +77,36 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="0,0,0,12">
-                    <TextBlock
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        Foreground="#FF1F2A37"
-                        Text="Вход в систему" />
+                    <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" Text="Вход в систему" />
                     <TextBlock
                         Margin="0,4,0,0"
-                        FontSize="12"
-                        Foreground="#FF5A6671"
+                        Style="{StaticResource MaterialDesignHelperTextBlock}"
                         Text="Введите учётные данные для доступа к записям склада" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" VerticalAlignment="Top">
 
-                    <TextBlock
-                        Margin="0,6,0,4"
-                        FontSize="12"
-                        Foreground="#FF3D4852"
-                        Text="Логин" />
+                    <TextBlock Margin="0,6,0,4" Text="Логин" />
                     <TextBox
                         x:Name="LoginBox"
                         Height="34"
-                        Padding="6"
                         FontSize="14" />
 
-                    <TextBlock
-                        Margin="0,12,0,4"
-                        FontSize="12"
-                        Foreground="#FF3D4852"
-                        Text="Пароль" />
+                    <TextBlock Margin="0,12,0,4" Text="Пароль" />
                     <PasswordBox
                         x:Name="PasswordBox"
                         Height="34"
-                        Padding="6"
                         FontSize="14" />
 
                     <StackPanel
                         Margin="0,10,0,0"
                         VerticalAlignment="Center"
+                        Focusable="False"
                         Orientation="Horizontal">
                         <CheckBox
                             x:Name="RememberCheckBox"
                             Content="Запомнить меня"
-                            Foreground="#FF3D4852" />
+                            Focusable="True" />
                     </StackPanel>
 
                     <TextBlock
@@ -142,27 +117,19 @@
 
                     <Button
                         x:Name="LoginButton"
-                        Height="40"
                         Margin="0,12,0,0"
-                        Background="#FF2B8AFF"
                         Click="LoginButton_Click"
                         Content="Войти"
-                        FontWeight="SemiBold"
-                        Foreground="White"
                         IsDefault="True" />
 
                     <StackPanel
                         Margin="0,16,0,0"
                         HorizontalAlignment="Center"
                         Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MaterialDesignBodySmallTextBlock}" Text="Версия" />
                         <TextBlock
-                            FontSize="12"
-                            Foreground="#FF8B98A2"
-                            Text="Версия" />
-                        <TextBlock
-                            FontSize="12"
-                            FontWeight="Bold"
-                            Foreground="#FF8B98A2"
+                            FontWeight="SemiBold"
+                            Style="{StaticResource MaterialDesignBodySmallTextBlock}"
                             Text=" 1.0.0" />
                     </StackPanel>
                 </StackPanel>

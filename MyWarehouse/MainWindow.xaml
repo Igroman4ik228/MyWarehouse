@@ -12,8 +12,9 @@
     MinHeight="450"
     MaxWidth="2000"
     MaxHeight="800"
+    Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
-    <Grid Background="#FF1F2A37">
+    <Grid>
         <Frame
             x:Name="MainFrame"
             NavigationUIVisibility="Hidden"

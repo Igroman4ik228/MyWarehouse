@@ -11,33 +11,6 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <Style x:Key="PrimaryButton" TargetType="Button">
-            <Setter Property="Background" Value="#FF2B8AFF" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Padding" Value="6,4" />
-            <Setter Property="BorderBrush" Value="#FF2B8AFF" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Width" Value="100" />
-            <Setter Property="Height" Value="32" />
-        </Style>
-
-        <Style x:Key="GhostButton" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="#FF3D4852" />
-            <Setter Property="BorderBrush" Value="#FFCED8E6" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="6,4" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Width" Value="90" />
-            <Setter Property="Height" Value="30" />
-        </Style>
-    </Page.Resources>
-
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -45,31 +18,20 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0">
-            <TextBlock
-                Margin="6"
-                DockPanel.Dock="Left"
-                FontSize="20"
-                FontWeight="Bold"
-                Text="Задачи" />
+            <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="Задачи" />
 
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <Button
                     x:Name="AddButton"
-                    Width="140"
-                    Height="32"
                     Margin="0,6,6,6"
-                    Click="AddButton_Click"
-                    Style="{StaticResource PrimaryButton}"
-                    Visibility="{Binding ShowAdminButtons, RelativeSource={RelativeSource AncestorType=Page}, Converter={StaticResource BoolToVis}}">
+                    Click="AddButton_Click">
                     Добавить задачу
                 </Button>
                 <Button
                     x:Name="RefreshButton"
-                    Width="120"
-                    Height="32"
                     Margin="0,6,0,6"
                     Click="RefreshButton_Click"
-                    Style="{StaticResource GhostButton}">
+                    Style="{StaticResource MaterialDesignFlatButton}">
                     Обновить
                 </Button>
             </StackPanel>

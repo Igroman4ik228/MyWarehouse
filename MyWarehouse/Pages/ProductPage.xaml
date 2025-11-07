@@ -30,57 +30,40 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border
-                            Width="400"
+                            Width="480"
                             Height="150"
                             Margin="8"
-                            Background="White"
-                            BorderBrush="#FFE6E9EE"
+                            BorderBrush="Black"
                             BorderThickness="1"
                             CornerRadius="8">
                             <Grid Margin="12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="90" />
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel>
                                     <TextBlock
                                         FontSize="14"
                                         FontWeight="SemiBold"
-                                        Foreground="#FF1F2A37"
                                         Text="{Binding Name}"
                                         TextTrimming="CharacterEllipsis" />
                                     <TextBlock
                                         Margin="0,4,0,0"
                                         FontSize="12"
-                                        Foreground="#FF8B98A2"
                                         Text="{Binding SKU}" />
 
                                     <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
-                                        <TextBlock
-                                            FontSize="12"
-                                            Foreground="#FF5A6671"
-                                            Text="Категория: " />
+                                        <TextBlock FontSize="12" Text="Категория: " />
                                         <TextBlock
                                             FontSize="12"
                                             FontWeight="Bold"
-                                            Foreground="#FF3D4852"
                                             Text="{Binding Category}" />
                                     </StackPanel>
 
                                     <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
-                                        <TextBlock
-                                            FontSize="12"
-                                            Foreground="#FF5A6671"
-                                            Text="Вес: " />
-                                        <TextBlock
-                                            FontSize="12"
-                                            Foreground="#FF3D4852"
-                                            Text="{Binding Weight}" />
-                                        <TextBlock
-                                            FontSize="12"
-                                            Foreground="#FF3D4852"
-                                            Text=" кг" />
+                                        <TextBlock FontSize="12" Text="Вес: " />
+                                        <TextBlock FontSize="12" Text="{Binding Weight}" />
+                                        <TextBlock FontSize="12" Text=" кг" />
                                     </StackPanel>
 
                                 </StackPanel>
@@ -92,13 +75,11 @@
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         FontSize="12"
-                                        Foreground="#FF8B98A2"
                                         Text="На складе" />
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         FontSize="20"
                                         FontWeight="Bold"
-                                        Foreground="#FF2B8AFF"
                                         Text="{Binding StockTotal}" />
 
                                     <Button
@@ -106,11 +87,9 @@
                                         Height="28"
                                         Margin="0,12,0,0"
                                         HorizontalAlignment="Center"
-                                        Background="#FF2B8AFF"
                                         Click="ViewButton_Click"
                                         Content="Просмотр"
                                         FontWeight="SemiBold"
-                                        Foreground="White"
                                         Tag="{Binding Id}" />
                                 </StackPanel>
                             </Grid>
