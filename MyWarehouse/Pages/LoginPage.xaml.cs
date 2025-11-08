@@ -24,6 +24,7 @@ namespace MyWarehouse.Pages
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             ErrorTextBlock.Visibility = Visibility.Collapsed;
+            LoginButton.IsEnabled = false;
 
             var login = LoginBox.Text.Trim();
             var password = PasswordBox.Password.Trim();
@@ -31,6 +32,7 @@ namespace MyWarehouse.Pages
             if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
             {
                 ShowError("Пожалуйста, введите логин и пароль.");
+                LoginButton.IsEnabled = true;
                 return;
             }
 
@@ -42,6 +44,7 @@ namespace MyWarehouse.Pages
                 ShowError("Неверный логин или пароль.");
                 PasswordBox.Clear();
                 PasswordBox.Focus();
+                LoginButton.IsEnabled = true;
                 return;
             }
 

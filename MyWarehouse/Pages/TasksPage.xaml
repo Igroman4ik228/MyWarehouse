@@ -10,7 +10,13 @@
     d:Background="#FFF7F8FA"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -18,14 +24,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  Header  -->
+        <!--  Заголовок  -->
         <DockPanel
             Grid.Row="0"
             Margin="0,0,0,8"
             LastChildFill="True">
-
             <TextBlock
-                Grid.Row="0"
                 FontWeight="Bold"
                 Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
                 Text="Задачи" />
@@ -44,16 +48,20 @@
             </StackPanel>
         </DockPanel>
 
+        <!--  Список задач  -->
         <ScrollViewer
             Grid.Row="1"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
-            <ItemsControl x:Name="TasksPanel" HorizontalAlignment="Stretch">
+            <ItemsControl
+                x:Name="TasksPanel"
+                HorizontalAlignment="Stretch"
+                ItemsSource="{Binding Tasks}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel
                             Margin="-4"
-                            ItemWidth="400"
+                            ItemWidth="370"
                             Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
@@ -61,12 +69,108 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <materialDesign:Card Margin="4" Style="{StaticResource MaterialDesignOutlinedCard}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="140" />
-                                </Grid.ColumnDefinitions>
+                            <Grid Margin="10">
+                                <StackPanel>
+                                    <!--  Заголовок + крестик  -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
 
+                                        <!--  Название товара  -->
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Style="{StaticResource MaterialDesignTitleMediumTextBlock}"
+                                            Text="{Binding ProductName}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
+
+                                        <!--  Статус  -->
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Foreground="Gray"
+                                            Text="{Binding TaskStatusName}" />
+
+                                        <!--  Крестик  -->
+                                        <Button
+                                            Grid.Column="2"
+                                            Margin="8,0,0,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="Transparent"
+                                            BorderBrush="{x:Null}"
+                                            Click="CancelButton_Click"
+                                            Content="✕"
+                                            FontSize="14"
+                                            FontWeight="Bold"
+                                            Foreground="Gray"
+                                            ToolTip="Отменить задачу"
+                                            Visibility="{Binding CanCancel, Converter={StaticResource BoolToVis}}" />
+                                    </Grid>
+
+                                    <!--  Детали  -->
+                                    <StackPanel Margin="0,8,0,0">
+                                        <TextBlock Foreground="Gray" Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                            <Run Text="Клиент: " />
+                                            <Run Text="{Binding ClientName}" />
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            Foreground="Gray"
+                                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                            Visibility="{Binding HasExecutor, Converter={StaticResource BoolToVis}}">
+                                            <Run Text="Исполнитель: " />
+                                            <Run Text="{Binding ExecutorName}" />
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            Foreground="Gray"
+                                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                            Visibility="{Binding HasFromLocation, Converter={StaticResource BoolToVis}}">
+                                            <Run Text="Откуда: " />
+                                            <Run Text="{Binding FromLocationName}" />
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            Foreground="Gray"
+                                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                            Visibility="{Binding HasToLocation, Converter={StaticResource BoolToVis}}">
+                                            <Run Text="Куда: " />
+                                            <Run Text="{Binding ToLocationName}" />
+                                        </TextBlock>
+
+                                        <TextBlock Foreground="Gray" Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                            <Run Text="Тип доставки: " />
+                                            <Run Text="{Binding DeliveryTypeName}" />
+                                        </TextBlock>
+
+                                        <TextBlock Foreground="Gray" Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                            <Run Text="Количество: " />
+                                            <Run FontWeight="SemiBold" Text="{Binding Quantity}" />
+                                        </TextBlock>
+
+                                        <TextBlock Foreground="Gray" Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                            <Run Text="Создано: " />
+                                            <Run Text="{Binding CreatedAt, StringFormat={}{0:g}}" />
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <!--  Кнопка действия  -->
+                                    <Button
+                                        Margin="0,12,0,0"
+                                        Background="{Binding ActionBackground}"
+                                        Click="ActionButton_Click"
+                                        Content="{Binding ActionText}"
+                                        Foreground="White"
+                                        Style="{StaticResource MaterialDesignRaisedButton}"
+                                        Visibility="{Binding CanAction, Converter={StaticResource BoolToVis}}" />
+                                </StackPanel>
                             </Grid>
                         </materialDesign:Card>
                     </DataTemplate>

@@ -4,76 +4,184 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MyWarehouse.Windows"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Добавить задачу"
-    Width="420"
-    Height="300"
+    Title="Добавить/Изменить задачу"
+    Width="500"
+    Height="400"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <Grid Margin="12">
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!--  Заголовок  -->
         <TextBlock
             Grid.Row="0"
-            VerticalAlignment="Center"
-            Text="Продукт:" />
-        <ComboBox
-            x:Name="ProductCombo"
-            Grid.Row="0"
-            Width="280"
-            Margin="90,0,0,0" />
+            Margin="0,0,0,16"
+            FontSize="20"
+            FontWeight="Bold"
+            Style="{StaticResource MaterialDesignHeadlineSmallTextBlock}"
+            Text="Добавление / редактирование задачи" />
 
-        <TextBlock
-            Grid.Row="1"
-            VerticalAlignment="Center"
-            Text="Клиент:" />
-        <ComboBox
-            x:Name="ClientCombo"
-            Grid.Row="1"
-            Width="280"
-            Margin="90,0,0,0" />
-
-        <TextBlock
-            Grid.Row="2"
-            VerticalAlignment="Center"
-            Text="Количество:" />
-        <TextBox
-            x:Name="QtyBox"
-            Grid.Row="2"
-            Width="120"
-            Margin="90,6,0,6" />
-
-        <TextBlock
-            Grid.Row="3"
-            VerticalAlignment="Top"
-            Text="Тип доставки:" />
-        <ComboBox
-            x:Name="DeliveryTypeCombo"
-            Grid.Row="3"
-            Width="280"
-            Margin="90,0,0,0" />
-
+        <!--  Клиент  -->
         <StackPanel
+            Grid.Row="1"
+            Margin="0,0,0,6"
+            Orientation="Horizontal">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Клиент:" />
+            <ComboBox
+                x:Name="ClientCombo"
+                Width="280"
+                DisplayMemberPath="Name"
+                SelectedValuePath="IdClient" />
+        </StackPanel>
+
+        <!--  Продукт  -->
+        <StackPanel
+            Grid.Row="3"
+            Margin="0,0,0,6"
+            Orientation="Horizontal">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Продукт:" />
+            <ComboBox
+                x:Name="ProductCombo"
+                Width="280"
+                DisplayMemberPath="Name"
+                SelectedValuePath="IdProduct" />
+        </StackPanel>
+
+        <!--  Откуда  -->
+        <StackPanel
+            x:Name="FromLocationStack"
             Grid.Row="4"
+            Margin="0,0,0,6"
+            d:Visibility="Visible"
+            Orientation="Horizontal"
+            Visibility="Collapsed">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Откуда:" />
+            <ComboBox
+                x:Name="FromLocationCombo"
+                Width="280"
+                SelectedValuePath="IdLocation">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} — Полка: {1}, Ячейка: {2}">
+                                    <Binding Path="Zone" />
+                                    <Binding Path="Shelf" />
+                                    <Binding Path="Cell" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <!--  Куда  -->
+        <StackPanel
+            x:Name="ToLocationStack"
+            Grid.Row="5"
+            Margin="0,0,0,6"
+            d:Visibility="Visible"
+            Orientation="Horizontal"
+            Visibility="Collapsed">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Куда:" />
+            <ComboBox
+                x:Name="ToLocationCombo"
+                Width="280"
+                SelectedValuePath="IdLocation">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0} — Полка: {1}, Ячейка: {2}">
+                                    <Binding Path="Zone" />
+                                    <Binding Path="Shelf" />
+                                    <Binding Path="Cell" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <!--  Тип доставки  -->
+        <StackPanel
+            Grid.Row="6"
+            Margin="0,0,0,6"
+            Orientation="Horizontal">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Тип доставки:" />
+            <ComboBox
+                x:Name="DeliveryTypeCombo"
+                Width="280"
+                DisplayMemberPath="Name"
+                SelectedValuePath="IdDeliveryType"
+                SelectionChanged="DeliveryTypeCombo_SelectionChanged" />
+        </StackPanel>
+
+        <!--  Количество  -->
+        <StackPanel
+            Grid.Row="7"
+            Margin="0,0,0,6"
+            Orientation="Horizontal">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Количество:" />
+            <TextBox
+                x:Name="QuantityTextBox"
+                Width="280"
+                materialDesign:HintAssist.Hint="Введите число"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+        </StackPanel>
+
+        <!--  Кнопки  -->
+        <StackPanel
+            Grid.Row="9"
+            Margin="0,20,0,0"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
             <Button
-                Width="90"
-                Margin="6"
-                Click="Cancel_Click">
-                Отмена
-            </Button>
+                x:Name="CancelButton"
+                Width="100"
+                Click="CancelButton_Click"
+                Content="Отмена"
+                Style="{StaticResource MaterialDesignOutlinedButton}" />
             <Button
-                Width="90"
-                Margin="6"
-                Click="Ok_Click">
-                Добавить
-            </Button>
+                x:Name="SaveButton"
+                Width="100"
+                Click="SaveButton_Click"
+                Content="Сохранить"
+                Style="{StaticResource MaterialDesignRaisedButton}" />
         </StackPanel>
     </Grid>
 </Window>
