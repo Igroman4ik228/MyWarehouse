@@ -40,132 +40,166 @@
         </x:Array>
     </Page.Resources>
 
-    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-        <ItemsControl d:ItemsSource="{StaticResource DesignProducts}" ItemsSource="{Binding Products}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Margin="-4" Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <materialDesign:Card
-                        Width="380"
-                        Margin="4"
-                        Style="{StaticResource MaterialDesignOutlinedCard}">
-                        <StackPanel Margin="12">
-                            <!--  Название товара и особенности в одной линии  -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-                                <!--  Название товара  -->
-                                <TextBlock
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Style="{StaticResource MaterialDesignTitleMediumTextBlock}"
-                                    Text="{Binding Name}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap" />
+        <!--  Header  -->
+        <DockPanel
+            Grid.Row="0"
+            Margin="0,0,0,8"
+            LastChildFill="True">
 
-                                <!--  Особенности  -->
-                                <StackPanel
-                                    Grid.Column="1"
-                                    Margin="8,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal">
-                                    <materialDesign:PackIcon
-                                        Width="24"
-                                        Height="24"
-                                        Margin="2,0"
-                                        Foreground="Orange"
-                                        Kind="GlassFragile"
-                                        ToolTip="Хрупкий"
-                                        Visibility="{Binding IsFragile, Converter={StaticResource BoolToVis}}" />
-                                    <materialDesign:PackIcon
-                                        Width="24"
-                                        Height="24"
-                                        Margin="2,0"
-                                        Foreground="Blue"
-                                        Kind="WaterAlert"
-                                        ToolTip="Боится воды"
-                                        Visibility="{Binding IsWaterSensitive, Converter={StaticResource BoolToVis}}" />
-                                </StackPanel>
-                            </Grid>
+            <TextBlock
+                Grid.Row="0"
+                FontWeight="Bold"
+                Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
+                Text="Товары на складе" />
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+            <StackPanel
+                HorizontalAlignment="Right"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
+                <Button
+                    x:Name="AddButton"
+                    Margin="8,0,0,0"
+                    Click="AddButton_Click"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    Добавить
+                </Button>
+            </StackPanel>
+        </DockPanel>
 
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl d:ItemsSource="{StaticResource DesignProducts}" ItemsSource="{Binding Products}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Margin="-4" Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:Card
+                            Width="380"
+                            Margin="4"
+                            Style="{StaticResource MaterialDesignOutlinedCard}">
+                            <StackPanel Margin="12">
+                                <!--  Название товара и особенности в одной линии  -->
                                 <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                    <!--  Артикул  -->
+                                    <!--  Название товара  -->
                                     <TextBlock
-                                        Grid.Row="0"
-                                        Margin="0,4,0,0"
-                                        Foreground="Gray"
-                                        Style="{StaticResource MaterialDesignBody2TextBlock}"
-                                        Text="{Binding SKU}" />
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Style="{StaticResource MaterialDesignTitleMediumTextBlock}"
+                                        Text="{Binding Name}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap" />
 
-                                    <!--  Категория  -->
-                                    <TextBlock
-                                        Grid.Row="1"
-                                        Margin="0,4,0,0"
-                                        Style="{StaticResource MaterialDesignBody2TextBlock}">
-                                        <Run Text="Категория:" />
-                                        <Run Text="{Binding Category}" />
-                                    </TextBlock>
-
-                                    <!--  Общий вес  -->
-                                    <TextBlock Grid.Row="2" Style="{StaticResource MaterialDesignBody2TextBlock}">
-                                        <Run Text="Общий вес:" />
-                                        <Run FontWeight="SemiBold" Text="{Binding WeightTotal, StringFormat={}{0:N2}}" />
-                                        <Run Text="кг" />
-                                    </TextBlock>
-
+                                    <!--  Особенности  -->
+                                    <StackPanel
+                                        Grid.Column="1"
+                                        Margin="8,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                        <materialDesign:PackIcon
+                                            Width="24"
+                                            Height="24"
+                                            Margin="2,0"
+                                            Foreground="Orange"
+                                            Kind="GlassFragile"
+                                            ToolTip="Хрупкий"
+                                            Visibility="{Binding IsFragile, Converter={StaticResource BoolToVis}}" />
+                                        <materialDesign:PackIcon
+                                            Width="24"
+                                            Height="24"
+                                            Margin="2,0"
+                                            Foreground="Blue"
+                                            Kind="WaterAlert"
+                                            ToolTip="Боится воды"
+                                            Visibility="{Binding IsWaterSensitive, Converter={StaticResource BoolToVis}}" />
+                                    </StackPanel>
                                 </Grid>
 
-                                <!--  Количество  -->
-                                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <TextBlock
-                                        Grid.Row="3"
-                                        Grid.ColumnSpan="2"
-                                        Style="{StaticResource MaterialDesignTitleMediumTextBlock}">
-                                        <Run Text="Всего:" />
-                                    </TextBlock>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource MaterialDesignTitleSmallTextBlock}">
-                                        <Run Text="{Binding QuantityTotal}" />
-                                        <Run Text="{Binding QuantityName}" />
-                                    </TextBlock>
-                                </StackPanel>
-                            </Grid>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                            <!--  Кнопка подробнее  -->
-                            <Button
-                                Margin="0,12,0,0"
-                                Click="DetailsButton_Click"
-                                Content="Подробнее"
-                                Style="{StaticResource MaterialDesignOutlinedButton}" />
+                                        <!--  Артикул  -->
+                                        <TextBlock
+                                            Grid.Row="0"
+                                            Margin="0,4,0,0"
+                                            Foreground="Gray"
+                                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                            Text="{Binding SKU}" />
 
-                        </StackPanel>
-                    </materialDesign:Card>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </ScrollViewer>
+                                        <!--  Категория  -->
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            Margin="0,4,0,0"
+                                            Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                            <Run Text="Категория:" />
+                                            <Run Text="{Binding Category}" />
+                                        </TextBlock>
+
+                                        <!--  Общий вес  -->
+                                        <TextBlock Grid.Row="2" Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                            <Run Text="Общий вес:" />
+                                            <Run FontWeight="SemiBold" Text="{Binding WeightTotal, StringFormat={}{0:N2}}" />
+                                            <Run Text="кг" />
+                                        </TextBlock>
+
+                                    </Grid>
+
+                                    <!--  Количество  -->
+                                    <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock
+                                            Grid.Row="3"
+                                            Grid.ColumnSpan="2"
+                                            Style="{StaticResource MaterialDesignTitleMediumTextBlock}">
+                                            <Run Text="Всего:" />
+                                        </TextBlock>
+
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource MaterialDesignTitleSmallTextBlock}">
+                                            <Run Text="{Binding QuantityTotal}" />
+                                            <Run Text="{Binding QuantityName}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!--  Кнопка подробнее  -->
+                                <Button
+                                    Margin="0,12,0,0"
+                                    Click="DetailsButton_Click"
+                                    Content="Подробнее"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" />
+
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
 </Page>

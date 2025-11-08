@@ -18,13 +18,6 @@ namespace MyWarehouse.Pages
         {
             InitializeComponent();
             UserFirstNameTextBlock.Text = UserSession.CurrentUser.FirstName;
-            MainFrame.Navigated += (s, e) =>
-            {
-                if (e.Content is Page page)
-                {
-                    PageTitleTextBlock.Text = page.Title;
-                }
-            };
 
             ShowProductsView();
         }

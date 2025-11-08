@@ -108,19 +108,6 @@
 
         <!--  Main content: use Frame to host Pages  -->
         <Grid Grid.Column="1" d:Background="#F1F1F1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <TextBlock
-                x:Name="PageTitleTextBlock"
-                Grid.Row="0"
-                HorizontalAlignment="Center"
-                d:Text="Заголовок страницы"
-                FontWeight="Bold"
-                Style="{StaticResource MaterialDesignTitleLargeTextBlock}" />
-
             <Frame
                 x:Name="MainFrame"
                 Grid.Row="1"

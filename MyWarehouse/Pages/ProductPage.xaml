@@ -44,7 +44,7 @@
         </local:ProductDetailViewModel>
     </Page.Resources>
 
-    <Grid Margin="12" d:DataContext="{StaticResource DesignProduct}">
+    <Grid d:DataContext="{StaticResource DesignProduct}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -55,6 +55,12 @@
             Grid.Row="0"
             Margin="0,0,0,8"
             LastChildFill="True">
+
+            <TextBlock
+                Grid.Row="0"
+                FontWeight="Bold"
+                Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
+                Text="Товары на складе" />
 
             <StackPanel
                 HorizontalAlignment="Right"

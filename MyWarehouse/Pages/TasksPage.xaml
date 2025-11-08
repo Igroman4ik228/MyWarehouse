@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MyWarehouse.Pages"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="TaskPage"
     d:Background="#FFF7F8FA"
@@ -11,133 +12,63 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <Grid Margin="12">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <DockPanel Grid.Row="0">
-            <TextBlock Style="{StaticResource MaterialDesignHeadline5TextBlock}" Text="Задачи" />
+        <!--  Header  -->
+        <DockPanel
+            Grid.Row="0"
+            Margin="0,0,0,8"
+            LastChildFill="True">
 
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <TextBlock
+                Grid.Row="0"
+                FontWeight="Bold"
+                Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
+                Text="Задачи" />
+
+            <StackPanel
+                HorizontalAlignment="Right"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
                 <Button
                     x:Name="AddButton"
-                    Margin="0,6,6,6"
-                    Click="AddButton_Click">
-                    Добавить задачу
-                </Button>
-                <Button
-                    x:Name="RefreshButton"
-                    Margin="0,6,0,6"
-                    Click="RefreshButton_Click"
-                    Style="{StaticResource MaterialDesignFlatButton}">
-                    Обновить
+                    Margin="8,0,0,0"
+                    Click="AddButton_Click"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    Добавить
                 </Button>
             </StackPanel>
         </DockPanel>
 
         <ScrollViewer
             Grid.Row="1"
-            Margin="0,8,0,0"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
             <ItemsControl x:Name="TasksPanel" HorizontalAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel ItemWidth="400" Orientation="Horizontal" />
+                        <WrapPanel
+                            Margin="-4"
+                            ItemWidth="400"
+                            Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border
-                            Width="380"
-                            Margin="8"
-                            Background="White"
-                            BorderBrush="#FFE6E9EE"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <Grid Margin="12">
+                        <materialDesign:Card Margin="4" Style="{StaticResource MaterialDesignOutlinedCard}">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="140" />
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock
-                                        FontSize="14"
-                                        FontWeight="SemiBold"
-                                        Foreground="#FF1F2A37"
-                                        Text="{Binding ProductName, Mode=OneWay}" />
-                                    <TextBlock
-                                        Margin="0,4,0,0"
-                                        FontSize="12"
-                                        Foreground="#FF8B98A2"
-                                        Text="{Binding ClientName, Mode=OneWay}" />
-                                    <TextBlock
-                                        Margin="0,8,0,0"
-                                        FontSize="12"
-                                        Foreground="#FF5A6671">
-                                        <Run Text="Количество: " />
-                                        <Run
-                                            FontWeight="Bold"
-                                            Foreground="#FF3D4852"
-                                            Text="{Binding ProductQuantity, Mode=OneWay}" />
-                                    </TextBlock>
-                                    <TextBlock
-                                        Margin="0,4,0,0"
-                                        FontSize="12"
-                                        Foreground="#FF3D4852">
-                                        <Run Text="Статус: " />
-                                        <Run FontWeight="Bold" Text="{Binding StatusName, Mode=OneWay}" />
-                                    </TextBlock>
-                                    <TextBlock
-                                        Margin="0,4,0,0"
-                                        FontSize="11"
-                                        Foreground="#FF8B98A2"
-                                        Text="{Binding CreatedAtString, Mode=OneWay}" />
-                                </StackPanel>
-
-                                <StackPanel
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center">
-                                    <Button
-                                        x:Name="ActionButton"
-                                        Click="ActionButton_Click"
-                                        Content="{Binding ActionLabel, Mode=OneWay}"
-                                        Style="{StaticResource PrimaryButton}"
-                                        Visibility="{Binding ActionVisible, Mode=OneWay, Converter={StaticResource BoolToVis}}" />
-                                    <Button
-                                        x:Name="RejectButton"
-                                        Margin="0,8,0,0"
-                                        Click="RejectButton_Click"
-                                        Content="Отклонить"
-                                        Style="{StaticResource GhostButton}"
-                                        Visibility="{Binding ShowExecButtons, RelativeSource={RelativeSource AncestorType=Page}, Converter={StaticResource BoolToVis}}" />
-
-                                    <StackPanel
-                                        Margin="0,12,0,0"
-                                        HorizontalAlignment="Center"
-                                        Orientation="Horizontal">
-                                        <Button
-                                            Margin="0,0,6,0"
-                                            Click="EditButton_Click"
-                                            Style="{StaticResource GhostButton}"
-                                            Visibility="{Binding ShowAdminButtons, RelativeSource={RelativeSource AncestorType=Page}, Converter={StaticResource BoolToVis}}">
-                                            Изменить
-                                        </Button>
-                                        <Button
-                                            Click="DeleteButton_Click"
-                                            Style="{StaticResource GhostButton}"
-                                            Visibility="{Binding ShowAdminButtons, RelativeSource={RelativeSource AncestorType=Page}, Converter={StaticResource BoolToVis}}">
-                                            Удалить
-                                        </Button>
-                                    </StackPanel>
-                                </StackPanel>
                             </Grid>
-                        </Border>
+                        </materialDesign:Card>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

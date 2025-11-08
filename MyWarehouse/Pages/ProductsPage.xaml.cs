@@ -70,6 +70,11 @@ namespace MyWarehouse.Pages
         {
             Products.Clear();
         }
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
     public class ProductViewModel
