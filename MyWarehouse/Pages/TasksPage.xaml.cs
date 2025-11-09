@@ -59,13 +59,13 @@ namespace MyWarehouse.Pages
             var vm = new TaskViewModel
             {
                 Id = task.IdDeliveryTask,
-                ProductName = task.Product?.Name ?? "-",
-                ClientName = task.Client?.Name ?? "-",
-                DeliveryTypeName = task.DeliveryType?.Name ?? "-",
+                ProductName = task.Product.Name,
+                ClientName = task.Client.Name,
+                DeliveryTypeName = task.DeliveryType.Name,
                 Quantity = task.ProductQuantity,
                 CreatedAt = task.CreatedAt,
                 TaskStatusId = task.TaskStatusId,
-                TaskStatusName = task.TaskStatus?.Name ?? "-",
+                TaskStatusName = task.TaskStatus.Name,
                 ExecutorUserId = task.ExecutorUserId,
                 ExecutorName = task.ExecutorUser?.FirstName,
                 FromLocationName = FormatLocation(task.FromLocation),

@@ -129,10 +129,8 @@ public class AppDbContext : DbContext
             .HasIndex(p => p.CategoryId);
 
         modelBuilder.Entity<Stock>()
-            .HasIndex(s => s.ProductId);
-
-        modelBuilder.Entity<Stock>()
-            .HasIndex(s => s.LocationId);
+            .HasIndex(s => new { s.ProductId, s.LocationId })
+            .IsUnique();
 
         modelBuilder.Entity<DeliveryTask>()
             .HasIndex(dt => dt.CreatedAt);

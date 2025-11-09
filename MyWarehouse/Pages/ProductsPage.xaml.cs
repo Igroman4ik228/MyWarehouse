@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Models;
 using MyWarehouse.Models.Entities;
+using MyWarehouse.Windows;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -73,9 +74,17 @@ namespace MyWarehouse.Pages
             Products.Clear();
         }
 
-        private void AddButton_Click(object sender, RoutedEventArgs e)
+        private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
+            var addProductWindow = new AddEditProductWindow(_db);
+            addProductWindow.Owner = Window.GetWindow(this);
 
+            if (addProductWindow.ShowDialog() == true)
+            {
+                // Обновляем список товаров
+                Products.Clear();
+                await LoadProducts(); // Перезагружаем асинхронно
+            }
         }
     }
 

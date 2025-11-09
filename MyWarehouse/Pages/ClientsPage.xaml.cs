@@ -49,10 +49,10 @@ namespace MyWarehouse.Pages
         {
             try
             {
-                await LoadClients();
-
                 // Проверяем права доступа
                 IsReadOnlyMode = UserSession.CurrentUser.RoleId == (int)RoleType.Courier;
+
+                await LoadClients();
 
                 StatusTextBlock.Text = "Данные загружены";
             }

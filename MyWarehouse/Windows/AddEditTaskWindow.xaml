@@ -6,11 +6,16 @@
     xmlns:local="clr-namespace:MyWarehouse.Windows"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:MyWarehouse.ViewModels"
     Title="Добавить/Изменить задачу"
     Width="500"
-    Height="400"
+    Height="450"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -45,15 +50,15 @@
                 VerticalAlignment="Center"
                 Text="Клиент:" />
             <ComboBox
-                x:Name="ClientCombo"
                 Width="280"
                 DisplayMemberPath="Name"
-                SelectedValuePath="IdClient" />
+                ItemsSource="{Binding Clients}"
+                SelectedItem="{Binding SelectedClient, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
         <!--  Продукт  -->
         <StackPanel
-            Grid.Row="3"
+            Grid.Row="2"
             Margin="0,0,0,6"
             Orientation="Horizontal">
             <TextBlock
@@ -61,77 +66,15 @@
                 VerticalAlignment="Center"
                 Text="Продукт:" />
             <ComboBox
-                x:Name="ProductCombo"
                 Width="280"
                 DisplayMemberPath="Name"
-                SelectedValuePath="IdProduct" />
-        </StackPanel>
-
-        <!--  Откуда  -->
-        <StackPanel
-            x:Name="FromLocationStack"
-            Grid.Row="4"
-            Margin="0,0,0,6"
-            Orientation="Horizontal"
-            Visibility="Collapsed">
-            <TextBlock
-                Width="100"
-                VerticalAlignment="Center"
-                Text="Откуда:" />
-            <ComboBox
-                x:Name="FromLocationCombo"
-                Width="280"
-                SelectedValuePath="IdLocation">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock>
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}{0} — Полка: {1}, Ячейка: {2}">
-                                    <Binding Path="Zone" />
-                                    <Binding Path="Shelf" />
-                                    <Binding Path="Cell" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </StackPanel>
-
-        <!--  Куда  -->
-        <StackPanel
-            x:Name="ToLocationStack"
-            Grid.Row="5"
-            Margin="0,0,0,6"
-            Orientation="Horizontal"
-            Visibility="Collapsed">
-            <TextBlock
-                Width="100"
-                VerticalAlignment="Center"
-                Text="Куда:" />
-            <ComboBox
-                x:Name="ToLocationCombo"
-                Width="280"
-                SelectedValuePath="IdLocation">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock>
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}{0} — Полка: {1}, Ячейка: {2}">
-                                    <Binding Path="Zone" />
-                                    <Binding Path="Shelf" />
-                                    <Binding Path="Cell" />
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+                ItemsSource="{Binding Products}"
+                SelectedItem="{Binding SelectedProduct, UpdateSourceTrigger=PropertyChanged}" />
         </StackPanel>
 
         <!--  Тип доставки  -->
         <StackPanel
-            Grid.Row="6"
+            Grid.Row="3"
             Margin="0,0,0,6"
             Orientation="Horizontal">
             <TextBlock
@@ -139,11 +82,54 @@
                 VerticalAlignment="Center"
                 Text="Тип доставки:" />
             <ComboBox
-                x:Name="DeliveryTypeCombo"
                 Width="280"
                 DisplayMemberPath="Name"
-                SelectedValuePath="IdDeliveryType"
-                SelectionChanged="DeliveryTypeCombo_SelectionChanged" />
+                ItemsSource="{Binding DeliveryTypes}"
+                SelectedItem="{Binding SelectedDeliveryType, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+
+        <!--  Откуда  -->
+        <StackPanel
+            Grid.Row="4"
+            Margin="0,0,0,6"
+            Orientation="Horizontal"
+            Visibility="{Binding IsFromLocationVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Откуда:" />
+            <ComboBox
+                Width="280"
+                ItemsSource="{Binding Locations}"
+                SelectedItem="{Binding SelectedFromLocation, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <!--  Куда  -->
+        <StackPanel
+            Grid.Row="5"
+            Margin="0,0,0,6"
+            Orientation="Horizontal"
+            Visibility="{Binding IsToLocationVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Куда:" />
+            <ComboBox
+                Width="280"
+                ItemsSource="{Binding Locations}"
+                SelectedItem="{Binding SelectedToLocation, UpdateSourceTrigger=PropertyChanged}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </StackPanel>
 
         <!--  Количество  -->
@@ -156,10 +142,28 @@
                 VerticalAlignment="Center"
                 Text="Количество:" />
             <TextBox
-                x:Name="QuantityTextBox"
                 Width="280"
                 materialDesign:HintAssist.Hint="Введите число"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                Text="{Binding QuantityText, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+
+        <!--  Информация о максимальном количестве  -->
+        <StackPanel
+            Grid.Row="8"
+            Margin="0,0,0,6"
+            Orientation="Horizontal">
+            <TextBlock
+                Width="100"
+                VerticalAlignment="Center"
+                Text="Информация:" />
+            <TextBlock
+                Width="280"
+                VerticalAlignment="Center"
+                FontStyle="Italic"
+                Foreground="Gray"
+                Text="{Binding MaxQuantityInfo}"
+                TextWrapping="Wrap" />
         </StackPanel>
 
         <!--  Кнопки  -->
@@ -170,16 +174,15 @@
             Orientation="Horizontal">
             <Button
                 x:Name="CancelButton"
-                Width="100"
                 Margin="0,0,10,0"
                 Click="CancelButton_Click"
                 Content="Отмена"
                 Style="{StaticResource MaterialDesignOutlinedButton}" />
             <Button
                 x:Name="SaveButton"
-                Width="100"
                 Click="SaveButton_Click"
                 Content="Сохранить"
+                IsEnabled="{Binding IsFormValid}"
                 Style="{StaticResource MaterialDesignRaisedButton}" />
         </StackPanel>
     </Grid>

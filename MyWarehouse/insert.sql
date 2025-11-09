@@ -7,13 +7,19 @@ VALUES
 ('Курьер', 'Выполнение задач по доставке');
 
 -- ===========================================
--- 2. Таблица: CURS_Users
--- ===========================================
+-- 2. Таблица: CURS_Users 
+-- =========================================== 
+
 INSERT INTO CURS_Users (FirstName, LastName, Login, Password, RoleId, Patronymic)
 VALUES
-('Иван', 'Петров', 'ivan', '12345', 1, 'Сергеевич'),
-('Мария', 'Сидорова', 'maria', 'qwerty', 2, NULL),
-('Алексей', 'Кузнецов', 'alex', 'password', 3, 'Игоревич');
+('Иван', 'Петров', 'ivan', '$2a$11$RuYZjHIW6ATKYiyZHdnMuOAQMbo5pyVvDfYe.W3GecHOqL6E1fn0G', 1, 'Сергеевич'), -- 12345
+('Мария', 'Сидорова', 'maria', '$2a$11$F97IZEgCnqFGXtuHWRisNe1OkPR4qu07tzd.SDjGv6re3t2/WOini', 2, NULL), -- qwerty
+('Алексей', 'Кузнецов', 'alex', '$2a$11$4vPGHsOQ37cJXccFoqw2hOBPOfQuPbeGO1wJuhPtBR.Lho.yG/uNy', 3, 'Игоревич'), -- password
+('1', '1', '1', '$2a$11$hrhlEMaR2l8QjP36PM07ge4iYaGabMK1Ou12yCAG5ht5.l5hfXdE6.W3GecHOqL6E1fn0G', 1, '1'), -- 1
+('2', '2', '2', '$2a$11$qFwQceUddWxKjhCgIpt3geIUizpBWUH/Ei4/ltJyoCjVV8RAKpxse', 2, NULL), -- 2
+('3', '3', '3', '$2a$11$IWS/Br9xf0tJQQbYWqNqveW5E7pEQh6z1fGyfWvdCuzhKZ0BG7Zyq', 3, '3'); -- 3
+
+
 
 -- ===========================================
 -- 3. Таблица: CURS_Categories

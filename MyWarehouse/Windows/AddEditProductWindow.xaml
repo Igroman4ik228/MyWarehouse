@@ -1,12 +1,225 @@
-﻿<Window x:Class="MyWarehouse.Windows.AddEditProductWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MyWarehouse.Windows"
-        mc:Ignorable="d"
-        Title="AddEditProductWindow" Height="450" Width="800">
-    <Grid>
-        
+﻿<Window
+    x:Class="MyWarehouse.Windows.AddEditProductWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{Binding WindowTitle}"
+    Width="800"
+    Height="650"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style
+            x:Key="FormLabel"
+            BasedOn="{StaticResource MaterialDesignBody2TextBlock}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,8,0,4" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style
+            x:Key="ValidationErrorTextBox"
+            BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}"
+            TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="Red" />
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style
+            x:Key="LocationDisplayTextBlock"
+            BasedOn="{StaticResource MaterialDesignBody2TextBlock}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,2,0,0" />
+            <Setter Property="Foreground" Value="Gray" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Заголовок  -->
+        <TextBlock
+            Grid.Row="0"
+            Margin="0,0,0,16"
+            Style="{StaticResource MaterialDesignTitleMediumTextBlock}"
+            Text="{Binding WindowTitle}" />
+
+        <!--  Основная форма  -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!--  Левая колонка - основная информация  -->
+                <StackPanel Grid.Column="0">
+                    <!--  Название товара  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Название товара *" />
+                    <TextBox
+                        materialDesign:HintAssist.Hint="Введите название товара"
+                        Style="{StaticResource ValidationErrorTextBox}"
+                        Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <!--  Артикул  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Артикул (SKU) *" />
+                    <TextBox
+                        materialDesign:HintAssist.Hint="Уникальный артикул"
+                        Style="{StaticResource ValidationErrorTextBox}"
+                        Text="{Binding SKU, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <!--  Описание  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Описание" />
+                    <TextBox
+                        Height="60"
+                        materialDesign:HintAssist.Hint="Описание товара"
+                        AcceptsReturn="True"
+                        Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                        Text="{Binding Description}"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto" />
+
+                    <!--  Категория  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Категория *" />
+                    <ComboBox
+                        materialDesign:HintAssist.Hint="Выберите категорию"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding Categories}"
+                        SelectedValue="{Binding CategoryId}"
+                        SelectedValuePath="IdCategory"
+                        Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+
+                    <!--  Единица измерения  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Единица измерения *" />
+                    <ComboBox
+                        materialDesign:HintAssist.Hint="Выберите единицу измерения"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding Units}"
+                        SelectedValue="{Binding UnitId}"
+                        SelectedValuePath="IdUnit"
+                        Style="{StaticResource MaterialDesignFloatingHintComboBox}" />
+                </StackPanel>
+
+                <!--  Правая колонка - характеристики и особенности  -->
+                <StackPanel Grid.Column="2">
+                    <!--  Вес  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Вес единицы товара (кг) *" />
+                    <TextBox
+                        materialDesign:HintAssist.Hint="0.00"
+                        Style="{StaticResource ValidationErrorTextBox}"
+                        Text="{Binding Weight, StringFormat=N2}" />
+
+                    <!--  Габариты  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Габариты (см)" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            materialDesign:HintAssist.Hint="Длина"
+                            Text="{Binding Length}" />
+                        <TextBox
+                            Grid.Column="2"
+                            materialDesign:HintAssist.Hint="Ширина"
+                            Text="{Binding Width}" />
+                        <TextBox
+                            Grid.Column="4"
+                            materialDesign:HintAssist.Hint="Высота"
+                            Text="{Binding Height}" />
+                    </Grid>
+
+                    <!--  Срок годности  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Срок годности" />
+                    <DatePicker
+                        materialDesign:HintAssist.Hint="Выберите дату"
+                        SelectedDate="{Binding ExpirationDate}"
+                        Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+
+                    <!--  Особенности  -->
+                    <TextBlock Style="{StaticResource FormLabel}" Text="Особенности" />
+                    <StackPanel Margin="0,8,0,0" Orientation="Vertical">
+                        <CheckBox
+                            Content="Хрупкий товар"
+                            IsChecked="{Binding IsFragile}"
+                            Style="{StaticResource MaterialDesignCheckBox}" />
+                        <CheckBox
+                            Content="Боится воды"
+                            IsChecked="{Binding IsWaterSensitive}"
+                            Style="{StaticResource MaterialDesignCheckBox}" />
+                    </StackPanel>
+
+                    <!--  Начальный остаток и локация (только для нового товара)  -->
+                    <StackPanel Margin="0,16,0,0" Visibility="{Binding ShowLocationSelection, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Style="{StaticResource FormLabel}" Text="Начальный остаток *" />
+                        <TextBox
+                            materialDesign:HintAssist.Hint="Количество"
+                            Style="{StaticResource ValidationErrorTextBox}"
+                            Text="{Binding InitialQuantity}" />
+
+                        <TextBlock Style="{StaticResource FormLabel}" Text="Локация размещения *" />
+                        <ComboBox
+                            materialDesign:HintAssist.Hint="Выберите локацию"
+                            ItemsSource="{Binding Locations}"
+                            SelectedValue="{Binding LocationId}"
+                            SelectedValuePath="IdLocation"
+                            Style="{StaticResource MaterialDesignFloatingHintComboBox}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="4">
+                                        <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" />
+                                        <TextBlock Style="{StaticResource LocationDisplayTextBlock}">
+                                            <Run Text="Макс.: " />
+                                            <Run Text="{Binding MaxLength, StringFormat={}{0}×}" />
+                                            <Run Text="{Binding MaxWidth, StringFormat={}{0}×}" />
+                                            <Run Text="{Binding MaxHeight, StringFormat={}{0}см}" />
+                                            <Run Text=", " />
+                                            <Run Text="{Binding MaxWeight, StringFormat={}{0} кг}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!--  Кнопки  -->
+        <StackPanel
+            Grid.Row="2"
+            Margin="0,16,0,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Margin="0,0,8,0"
+                Click="CancelButton_Click"
+                Content="Отмена"
+                Style="{StaticResource MaterialDesignOutlinedButton}" />
+            <Button
+                Click="SaveButton_Click"
+                Content="Сохранить"
+                IsEnabled="{Binding IsValid}"
+                Style="{StaticResource MaterialDesignRaisedButton}" />
+        </StackPanel>
     </Grid>
 </Window>

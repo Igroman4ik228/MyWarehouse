@@ -137,6 +137,9 @@ public class Location
     public ICollection<Stock> Stocks { get; set; } = [];
     public ICollection<DeliveryTask> FromDeliveryTasks { get; set; } = [];
     public ICollection<DeliveryTask> ToDeliveryTasks { get; set; } = [];
+
+    [NotMapped]
+    public string DisplayName => $"{Zone} — Полка: {Shelf}, Ячейка: {Cell}";
 }
 
 public class Client
