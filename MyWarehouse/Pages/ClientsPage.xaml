@@ -1,0 +1,285 @@
+﻿<Page
+    x:Class="MyWarehouse.Pages.ClientsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MyWarehouse.Pages"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    Title="ClientsPage"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style x:Key="ReadOnlyTextBoxStyle" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+
+        <Style x:Key="EditableTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Header  -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock
+                DockPanel.Dock="Left"
+                FontSize="20"
+                FontWeight="Bold"
+                Style="{StaticResource MaterialDesignTitleMediumTextBlock}"
+                Text="Клиенты" />
+
+            <StackPanel
+                HorizontalAlignment="Right"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
+
+                <Button
+                    x:Name="AddButton"
+                    Margin="8,0,0,0"
+                    Click="AddButton_Click"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    ToolTip="Добавить нового клиента">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,4,0"
+                            Kind="Plus" />
+                        <TextBlock Text="Добавить" />
+                    </StackPanel>
+                </Button>
+
+                <Button
+                    x:Name="SaveButton"
+                    Margin="8,0,0,0"
+                    Click="SaveButton_Click"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    ToolTip="Сохранить изменения">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,4,0"
+                            Kind="ContentSave" />
+                        <TextBlock Text="Сохранить" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <!--  DataGrid  -->
+        <DataGrid
+            x:Name="ClientsDataGrid"
+            Grid.Row="1"
+            materialDesign:DataGridAssist.CellPadding="13,8,12,8"
+            materialDesign:DataGridAssist.ColumnHeaderPadding="8"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            IsReadOnly="True"
+            ItemsSource="{Binding Clients}"
+            SelectionMode="Single"
+            SelectionUnit="FullRow">
+
+            <DataGrid.Columns>
+                <!--  ID Column  -->
+                <DataGridTextColumn
+                    Width="Auto"
+                    Binding="{Binding IdClient}"
+                    Header="ID"
+                    IsReadOnly="True">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <!--  Name Column  -->
+                <DataGridTemplateColumn Width="2*" Header="Имя клиента">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding Name}"
+                                TextTrimming="CharacterEllipsis"
+                                ToolTip="{Binding Name}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox
+                                materialDesign:HintAssist.Hint="Введите имя"
+                                MaxLength="200"
+                                Style="{StaticResource EditableTextBoxStyle}"
+                                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <!--  Email Column  -->
+                <DataGridTemplateColumn Width="2*" Header="Email">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding Email}"
+                                TextTrimming="CharacterEllipsis"
+                                ToolTip="{Binding Email}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox
+                                materialDesign:HintAssist.Hint="email@example.com"
+                                MaxLength="100"
+                                Style="{StaticResource EditableTextBoxStyle}"
+                                Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <!--  Phone Column  -->
+                <DataGridTemplateColumn Width="1.5*" Header="Телефон">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding Phone}"
+                                TextTrimming="CharacterEllipsis"
+                                ToolTip="{Binding Phone}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox
+                                materialDesign:HintAssist.Hint="+7 XXX XXX-XX-XX"
+                                MaxLength="20"
+                                Style="{StaticResource EditableTextBoxStyle}"
+                                Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <!--  Description Column  -->
+                <DataGridTemplateColumn Width="3*" Header="Описание">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Text="{Binding Description}"
+                                TextTrimming="CharacterEllipsis"
+                                ToolTip="{Binding Description}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <TextBox
+                                Height="60"
+                                materialDesign:HintAssist.Hint="Описание клиента"
+                                AcceptsReturn="True"
+                                MaxLength="500"
+                                Style="{StaticResource EditableTextBoxStyle}"
+                                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                TextWrapping="Wrap" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+
+                <!--  Actions Column  -->
+                <DataGridTemplateColumn Width="Auto" Header="Действия">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button
+                                    x:Name="DeleteButton"
+                                    Margin="2"
+                                    Click="DeleteButton_Click"
+                                    Style="{StaticResource MaterialDesignToolButton}"
+                                    ToolTip="Удалить">
+                                    <materialDesign:PackIcon
+                                        Width="16"
+                                        Height="16"
+                                        Kind="Delete" />
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button
+                                    Margin="2"
+                                    Click="SaveRowButton_Click"
+                                    Style="{StaticResource MaterialDesignToolButton}"
+                                    ToolTip="Сохранить строку">
+                                    <materialDesign:PackIcon
+                                        Width="16"
+                                        Height="16"
+                                        Kind="Check" />
+                                </Button>
+                                <Button
+                                    Margin="2"
+                                    Click="CancelEditButton_Click"
+                                    Style="{StaticResource MaterialDesignToolButton}"
+                                    ToolTip="Отменить редактирование">
+                                    <materialDesign:PackIcon
+                                        Width="16"
+                                        Height="16"
+                                        Kind="Close" />
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!--  Status Bar  -->
+        <Border
+            Grid.Row="2"
+            Margin="0,8,0,0"
+            Background="{DynamicResource MaterialDesignCardBackground}"
+            BorderBrush="{DynamicResource MaterialDesignDivider}"
+            BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    x:Name="StatusTextBlock"
+                    Grid.Column="0"
+                    Margin="8,4"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="Готово"
+                    TextTrimming="CharacterEllipsis" />
+
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="8,4"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource MaterialDesignBody}"
+                    Text="{Binding ElementName=ClientsDataGrid, Path=Items.Count, StringFormat={}Всего клиентов: {0}}" />
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

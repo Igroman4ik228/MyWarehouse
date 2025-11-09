@@ -19,13 +19,14 @@ namespace MyWarehouse.Pages
     {
         private const int AutoRefreshIntervalSeconds = 20;
 
-        private readonly AppDbContext db = new();
+        private readonly AppDbContext _db;
         private DispatcherTimer? timer;
         private int ProductId { get; }
 
-        public ProductPage(int productId)
+        public ProductPage(int productId, AppDbContext db)
         {
             InitializeComponent();
+            _db = db;
             ProductId = productId;
         }
 
@@ -64,7 +65,7 @@ namespace MyWarehouse.Pages
         {
             try
             {
-                var product = await db.CURS_Products
+                var product = await _db.CURS_Products
                     .Where(p => p.IdProduct == ProductId)
                     .Include(p => p.Category)
                     .Include(p => p.Unit)

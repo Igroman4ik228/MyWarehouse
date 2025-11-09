@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Models;
 using MyWarehouse.Models.Entities;
 using System.Collections;
@@ -15,19 +16,20 @@ namespace MyWarehouse.Pages
     /// </summary>
     public partial class ProductsPage : Page
     {
-        private readonly AppDbContext db = new();
+        private readonly AppDbContext _db;
 
         public ObservableCollection<ProductViewModel> Products { get; } = [];
 
-        public ProductsPage()
+        public ProductsPage(AppDbContext db)
         {
             InitializeComponent();
+            _db = db; 
             DataContext = this;
         }
 
         private async Task LoadProducts()
         {
-            var products = await db.CURS_Products
+            var products = await _db.CURS_Products
                 .Include(p => p.Category)
                 .Include(p => p.Stocks)
                 .Include(p => p.Unit)
@@ -57,7 +59,7 @@ namespace MyWarehouse.Pages
         {
             if (sender is Button button && button.DataContext is ProductViewModel product)
             {
-                NavigationService.Navigate(App.ServiceProvider.GetService<ProductPage>());
+                NavigationService.Navigate(new ProductPage(product.Id, _db));
             }
         }
 

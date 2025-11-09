@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MyWarehouse.Models.Entities;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Services;
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -24,7 +22,7 @@ namespace MyWarehouse.Pages
 
         private void ShowProductsView()
         {
-            MainFrame.Navigate(new ProductsPage());
+            MainFrame.Navigate(App.ServiceProvider.GetService<ProductsPage>());
         }
 
         private void AdminPanel_Click(object sender, RoutedEventArgs e)
@@ -34,7 +32,7 @@ namespace MyWarehouse.Pages
 
         private void Tasks_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new TasksPage());
+            MainFrame.Navigate(App.ServiceProvider.GetService<TasksPage>());
         }
 
         private void Products_Click(object sender, RoutedEventArgs e)
@@ -42,14 +40,14 @@ namespace MyWarehouse.Pages
             ShowProductsView();
         }
 
-        private void Clients_Click(object sender, RoutedEventArgs e)
+        private void Locations_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Открыть список клиентов.", "Клиенты", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Открыть список локаций.", "Клиенты", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void Stocks_Click(object sender, RoutedEventArgs e)
+        private void Clients_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Открыть склады/запасы.", "Склады", MessageBoxButton.OK, MessageBoxImage.Information);
+            MainFrame.Navigate(App.ServiceProvider.GetService<ClientsPage>());
         }
 
         private void MainFrame_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)

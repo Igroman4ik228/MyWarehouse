@@ -13,7 +13,7 @@ namespace MyWarehouse.Pages
     /// </summary>
     public partial class LoginPage : Page
     {
-        private readonly AppDbContext db = new();
+        private readonly AppDbContext _db = new();
 
         public LoginPage()
         {
@@ -37,7 +37,7 @@ namespace MyWarehouse.Pages
             }
 
 
-            var user = await Task.Run(() => db.CURS_Users.FirstOrDefaultAsync(u => u.Login == login));
+            var user = await Task.Run(() => _db.CURS_Users.FirstOrDefaultAsync(u => u.Login == login));
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password)) 
             {

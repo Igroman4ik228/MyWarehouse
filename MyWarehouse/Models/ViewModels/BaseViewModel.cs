@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyWarehouse.Models.ViewModels
 {
-    class BaseViewModel
+    public class BaseViewModel
     {
     }
 }

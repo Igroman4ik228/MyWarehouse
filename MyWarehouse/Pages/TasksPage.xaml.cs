@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Models;
 using MyWarehouse.Models.Entities;
 using MyWarehouse.Services;
@@ -12,86 +13,95 @@ namespace MyWarehouse.Pages
 {
     public partial class TasksPage : Page
     {
-        private readonly AppDbContext db = new();
-
+        private readonly AppDbContext _db;
         public ObservableCollection<TaskViewModel> Tasks { get; } = [];
 
-        public TasksPage()
+        public TasksPage(AppDbContext db)
         {
+            _db = db;
             InitializeComponent();
             DataContext = this;
         }
 
-        private async Task LoadTasks()
+        private async Task LoadActiveTasks()
         {
-            var tasks = await db.CURS_DeliveryTasks
-                .Include(t => t.Product)
-                .Include(t => t.Client)
-                .Include(t => t.DeliveryType)
-                .Include(t => t.TaskStatus)
-                .Include(t => t.ExecutorUser)
-                .Include(t => t.FromLocation)
-                .Include(t => t.ToLocation)
-                .ToListAsync();
-
-            Tasks.Clear();
-
-            foreach (var t in tasks)
+            try
             {
-                var vm = new TaskViewModel
-                {
-                    Id = t.IdDeliveryTask,
-                    ProductName = t.Product?.Name ?? "-",
-                    ClientName = t.Client?.Name ?? "-",
-                    DeliveryTypeName = t.DeliveryType?.Name ?? "-",
-                    Quantity = t.ProductQuantity,
-                    CreatedAt = t.CreatedAt,
-                    TaskStatusId = t.TaskStatusId,
-                    TaskStatusName = t.TaskStatus?.Name ?? "-",
-                    ExecutorUserId = t.ExecutorUserId,
-                    ExecutorName = t.ExecutorUser?.FirstName,
-                    FromLocationName = t.FromLocation != null ? $"{t.FromLocation?.Zone} {t.FromLocation?.Shelf} {t.FromLocation?.Cell}" : null,
-                    ToLocationName = t.ToLocation != null ? $"{t.ToLocation?.Zone} {t.ToLocation?.Shelf} {t.ToLocation?.Cell}" : null,
-                    DeliveryTaskEntity = t,
-                    CanAction = false,
-                    ActionBackground = new SolidColorBrush(Colors.Gray),
-                    ActionText = t.TaskStatus?.Name ?? "-"
-                };
+                var activeStatuses = new[] { (int)DeliveryTaskStatus.NotTaken, (int)DeliveryTaskStatus.InProgress };
 
-                // Логика действия
-                if (t.TaskStatusId == (int)DeliveryTaskStatus.NotTaken)
+                var tasks = await _db.CURS_DeliveryTasks
+                    .Include(t => t.Product)
+                    .Include(t => t.Client)
+                    .Include(t => t.DeliveryType)
+                    .Include(t => t.TaskStatus)
+                    .Include(t => t.ExecutorUser)
+                    .Include(t => t.FromLocation)
+                    .Include(t => t.ToLocation)
+                    .Where(t => activeStatuses.Contains(t.TaskStatusId))
+                    .ToListAsync();
+
+                Tasks.Clear();
+
+                foreach (var task in tasks)
                 {
-                    vm.CanAction = true;
-                    vm.ActionText = "Взять";
-                    vm.ActionBackground = new SolidColorBrush(Colors.Green);
+                    Tasks.Add(CreateTaskViewModel(task));
                 }
-
-                if (t.TaskStatusId == (int)DeliveryTaskStatus.InProgress && t.ExecutorUserId == UserSession.CurrentUser.IdUser)
-                {
-                    vm.CanAction = true;
-                    vm.ActionText = "Завершить";
-                    vm.ActionBackground = new SolidColorBrush(Colors.Orange);
-                }
-
-                if (t.TaskStatusId == (int)DeliveryTaskStatus.Completed)
-                    vm.CanAction = false;
-
-                if (t.TaskStatusId == (int)DeliveryTaskStatus.InProgress && t.ExecutorUserId.HasValue && t.ExecutorUserId != UserSession.CurrentUser.IdUser)
-                    vm.CanAction = false;
-
-                // Кнопка "Отменить" — только для админа или менеджера
-                vm.CanCancel =
-                    (UserSession.IsAdmin || UserSession.IsManager)
-                    && t.TaskStatusId != (int)DeliveryTaskStatus.Completed
-                    && t.TaskStatusId != (int)DeliveryTaskStatus.Rejected;
-
-                Tasks.Add(vm);
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки задач: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private TaskViewModel CreateTaskViewModel(DeliveryTask task)
+        {
+            var vm = new TaskViewModel
+            {
+                Id = task.IdDeliveryTask,
+                ProductName = task.Product?.Name ?? "-",
+                ClientName = task.Client?.Name ?? "-",
+                DeliveryTypeName = task.DeliveryType?.Name ?? "-",
+                Quantity = task.ProductQuantity,
+                CreatedAt = task.CreatedAt,
+                TaskStatusId = task.TaskStatusId,
+                TaskStatusName = task.TaskStatus?.Name ?? "-",
+                ExecutorUserId = task.ExecutorUserId,
+                ExecutorName = task.ExecutorUser?.FirstName,
+                FromLocationName = FormatLocation(task.FromLocation),
+                ToLocationName = FormatLocation(task.ToLocation)
+            };
+
+            // Логика действий
+            if (task.TaskStatusId == (int)DeliveryTaskStatus.NotTaken)
+            {
+                vm.CanAction = true;
+                vm.ActionText = "Взять";
+                vm.ActionBackground = new SolidColorBrush(Colors.Green);
+            }
+            else if (task.TaskStatusId == (int)DeliveryTaskStatus.InProgress && task.ExecutorUserId == UserSession.CurrentUser.IdUser)
+            {
+                vm.CanAction = true;
+                vm.ActionText = "Завершить";
+                vm.ActionBackground = new SolidColorBrush(Colors.Orange);
+            }
+
+            // Логика отмены
+            vm.CanCancel = (UserSession.IsAdmin || UserSession.IsManager)
+                && task.TaskStatusId != (int)DeliveryTaskStatus.Completed
+                && task.TaskStatusId != (int)DeliveryTaskStatus.Rejected;
+
+            return vm;
+        }
+
+        private static string? FormatLocation(Location? location)
+        {
+            return location != null ? $"{location.Zone} {location.Shelf} {location.Cell}" : null;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadTasks();
+            await LoadActiveTasks();
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -99,65 +109,97 @@ namespace MyWarehouse.Pages
             Tasks.Clear();
         }
 
+        private void HistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            var historyPage = App.ServiceProvider.GetService<TasksHistoryPage>();
+            NavigationService?.Navigate(historyPage);
+        }
+
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            var w = new AddEditTaskWindow();
-            if (w.ShowDialog() == true)
+            var window = new AddEditTaskWindow(_db);
+            if (window.ShowDialog() == true)
             {
-                var newTask = new DeliveryTask
+                try
                 {
-                    ProductId = w.SelectedProductId,
-                    ClientId = w.SelectedClientId,
-                    DeliveryTypeId = w.SelectedDeliveryTypeId,
-                    ProductQuantity = w.Quantity,
-                    CreatedUserId = UserSession.CurrentUser.IdUser,
-                    TaskStatusId = (int)DeliveryTaskStatus.NotTaken,
-                    FromLocationId = w.SelectedFromLocationId,
-                    ToLocationId = w.SelectedToLocationId
-                };
+                    var newTask = new DeliveryTask
+                    {
+                        ProductId = window.SelectedProductId,
+                        ClientId = window.SelectedClientId,
+                        DeliveryTypeId = window.SelectedDeliveryTypeId,
+                        ProductQuantity = window.Quantity,
+                        CreatedUserId = UserSession.CurrentUser.IdUser,
+                        TaskStatusId = (int)DeliveryTaskStatus.NotTaken,
+                        FromLocationId = window.SelectedFromLocationId,
+                        ToLocationId = window.SelectedToLocationId,
+                        CreatedAt = DateTime.Now
+                    };
 
-                db.CURS_DeliveryTasks.Add(newTask);
-                await db.SaveChangesAsync();
-                await LoadTasks();
+                    _db.CURS_DeliveryTasks.Add(newTask);
+                    await _db.SaveChangesAsync();
+                    await LoadActiveTasks();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка создания задачи: {ex.Message}", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
         private async void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is TaskViewModel vm)
+            if (sender is Button { DataContext: TaskViewModel viewModel })
             {
-                var task = await db.CURS_DeliveryTasks.FindAsync(vm.Id);
-                if (task == null) return;
-
-                if (task.TaskStatusId == (int)DeliveryTaskStatus.NotTaken)
+                try
                 {
-                    task.TaskStatusId = (int)DeliveryTaskStatus.InProgress;
-                    task.ExecutorUserId = UserSession.CurrentUser.IdUser;
-                }
-                else if (task.TaskStatusId == (int)DeliveryTaskStatus.InProgress && task.ExecutorUserId == UserSession.CurrentUser.IdUser)
-                {
-                    task.TaskStatusId = (int)DeliveryTaskStatus.Completed;
-                }
+                    var task = await _db.CURS_DeliveryTasks.FindAsync(viewModel.Id);
+                    if (task == null) return;
 
-                db.Update(task);
-                await db.SaveChangesAsync();
-                await LoadTasks();
+                    if (task.TaskStatusId == (int)DeliveryTaskStatus.NotTaken)
+                    {
+                        task.TaskStatusId = (int)DeliveryTaskStatus.InProgress;
+                        task.ExecutorUserId = UserSession.CurrentUser.IdUser;
+                    }
+                    else if (task.TaskStatusId == (int)DeliveryTaskStatus.InProgress && task.ExecutorUserId == UserSession.CurrentUser.IdUser)
+                    {
+                        task.TaskStatusId = (int)DeliveryTaskStatus.Completed;
+                    }
+
+                    await _db.SaveChangesAsync();
+                    await LoadActiveTasks();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка выполнения действия: {ex.Message}", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
         private async void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is TaskViewModel vm)
+            if (sender is Button { DataContext: TaskViewModel viewModel })
             {
-                if (MessageBox.Show("Вы действительно хотите отменить задачу?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    var task = await db.CURS_DeliveryTasks.FindAsync(vm.Id);
-                    if (task == null) return;
+                var result = MessageBox.Show("Вы действительно хотите отменить задачу?", "Подтверждение",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-                    task.TaskStatusId = (int)DeliveryTaskStatus.Rejected;
-                    db.Update(task);
-                    await db.SaveChangesAsync();
-                    await LoadTasks();
+                if (result == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        var task = await _db.CURS_DeliveryTasks.FindAsync(viewModel.Id);
+                        if (task == null) return;
+
+                        task.TaskStatusId = (int)DeliveryTaskStatus.Rejected;
+                        await _db.SaveChangesAsync();
+                        await LoadActiveTasks();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка отмены задачи: {ex.Message}", "Ошибка",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }
@@ -176,18 +218,13 @@ namespace MyWarehouse.Pages
         public int? ExecutorUserId { get; set; }
         public string? ExecutorName { get; set; }
         public bool HasExecutor => !string.IsNullOrEmpty(ExecutorName);
-
         public string? FromLocationName { get; set; }
         public string? ToLocationName { get; set; }
         public bool HasFromLocation => !string.IsNullOrEmpty(FromLocationName);
         public bool HasToLocation => !string.IsNullOrEmpty(ToLocationName);
-
         public bool CanAction { get; set; }
         public bool CanCancel { get; set; }
-
         public string ActionText { get; set; } = string.Empty;
         public SolidColorBrush ActionBackground { get; set; } = new(Colors.Gray);
-
-        public DeliveryTask? DeliveryTaskEntity { get; set; }
     }
 }

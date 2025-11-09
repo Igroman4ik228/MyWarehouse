@@ -88,6 +88,12 @@
                 <Button
                     Background="Transparent"
                     BorderBrush="Transparent"
+                    Click="Locations_Click"
+                    Content="Места" />
+
+                <Button
+                    Background="Transparent"
+                    BorderBrush="Transparent"
                     Click="AdminPanel_Click"
                     Content="Админ панель" />
 
