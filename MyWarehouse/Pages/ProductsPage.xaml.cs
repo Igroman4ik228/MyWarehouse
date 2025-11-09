@@ -57,7 +57,7 @@ namespace MyWarehouse.Pages
         {
             if (sender is Button button && button.DataContext is ProductViewModel product)
             {
-                NavigationService.Navigate(new ProductPage(product.Id));
+                NavigationService.Navigate(App.ServiceProvider.GetService<ProductPage>());
             }
         }
 
