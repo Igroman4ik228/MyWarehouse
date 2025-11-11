@@ -42,7 +42,7 @@ namespace MyWarehouse.Pages
 
         private void Locations_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Открыть список локаций.", "Клиенты", MessageBoxButton.OK, MessageBoxImage.Information);
+            MainFrame.Navigate(App.ServiceProvider.GetService<LocationsPage>());
         }
 
         private void Clients_Click(object sender, RoutedEventArgs e)

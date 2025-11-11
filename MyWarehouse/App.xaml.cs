@@ -32,6 +32,7 @@ namespace MyWarehouse
             services.AddTransient<TasksHistoryPage>();
             services.AddTransient<ProductsPage>();
             services.AddTransient<ClientsPage>();
+            services.AddTransient<LocationsPage>();
 
             services.AddScoped<ITaskProcessingService, TaskProcessingService>();
         }

@@ -171,6 +171,7 @@
                                     <!--  Кнопка действия  -->
                                     <Button
                                         Margin="0,12,0,0"
+                                        VerticalAlignment="Bottom"
                                         Background="{Binding ActionBackground}"
                                         Click="ActionButton_Click"
                                         Content="{Binding ActionText}"

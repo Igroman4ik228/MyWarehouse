@@ -14,7 +14,7 @@ namespace MyWarehouse.Pages
     public partial class ClientsPage : Page, INotifyPropertyChanged
     {
         private ObservableCollection<Client> _clients;
-        private AppDbContext _db;
+        private readonly AppDbContext _db;
         private bool _isReadOnlyMode;
 
         public ObservableCollection<Client> Clients
