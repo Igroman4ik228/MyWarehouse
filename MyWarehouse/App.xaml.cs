@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Models;
 using MyWarehouse.Models.Entities;
 using MyWarehouse.Pages;
+using MyWarehouse.Services;
 using MyWarehouse.Windows;
 using System.Windows;
 
@@ -31,6 +32,8 @@ namespace MyWarehouse
             services.AddTransient<TasksHistoryPage>();
             services.AddTransient<ProductsPage>();
             services.AddTransient<ClientsPage>();
+
+            services.AddScoped<ITaskProcessingService, TaskProcessingService>();
         }
 
         protected override void OnExit(ExitEventArgs e)

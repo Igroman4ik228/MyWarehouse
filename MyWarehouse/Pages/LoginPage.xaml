@@ -98,17 +98,6 @@
                         Height="34"
                         FontSize="14" />
 
-                    <StackPanel
-                        Margin="0,10,0,0"
-                        VerticalAlignment="Center"
-                        Focusable="False"
-                        Orientation="Horizontal">
-                        <CheckBox
-                            x:Name="RememberCheckBox"
-                            Content="Запомнить меня"
-                            Focusable="True" />
-                    </StackPanel>
-
                     <TextBlock
                         x:Name="ErrorTextBlock"
                         Margin="0,10,0,0"

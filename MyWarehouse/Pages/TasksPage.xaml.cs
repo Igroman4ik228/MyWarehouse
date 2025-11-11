@@ -14,11 +14,13 @@ namespace MyWarehouse.Pages
     public partial class TasksPage : Page
     {
         private readonly AppDbContext _db;
+        private readonly ITaskProcessingService _taskProcessor;
         public ObservableCollection<TaskViewModel> Tasks { get; } = [];
 
-        public TasksPage(AppDbContext db)
+        public TasksPage(AppDbContext db, ITaskProcessingService taskProcessor)
         {
             _db = db;
+            _taskProcessor = taskProcessor;
             InitializeComponent();
             DataContext = this;
         }
@@ -27,7 +29,10 @@ namespace MyWarehouse.Pages
         {
             try
             {
-                var activeStatuses = new[] { (int)DeliveryTaskStatus.NotTaken, (int)DeliveryTaskStatus.InProgress };
+                var activeStatuses = new[] {
+                    (int)DeliveryTaskStatus.NotTaken,
+                    (int)DeliveryTaskStatus.InProgress
+                };
 
                 var tasks = await _db.CURS_DeliveryTasks
                     .Include(t => t.Product)
@@ -38,6 +43,7 @@ namespace MyWarehouse.Pages
                     .Include(t => t.FromLocation)
                     .Include(t => t.ToLocation)
                     .Where(t => activeStatuses.Contains(t.TaskStatusId))
+                    .OrderByDescending(t => t.CreatedAt)
                     .ToListAsync();
 
                 Tasks.Clear();
@@ -54,7 +60,7 @@ namespace MyWarehouse.Pages
             }
         }
 
-        private TaskViewModel CreateTaskViewModel(DeliveryTask task)
+        private static TaskViewModel CreateTaskViewModel(DeliveryTask task)
         {
             var vm = new TaskViewModel
             {
@@ -79,7 +85,8 @@ namespace MyWarehouse.Pages
                 vm.ActionText = "Взять";
                 vm.ActionBackground = new SolidColorBrush(Colors.Green);
             }
-            else if (task.TaskStatusId == (int)DeliveryTaskStatus.InProgress && task.ExecutorUserId == UserSession.CurrentUser.IdUser)
+            else if (task.TaskStatusId == (int)DeliveryTaskStatus.InProgress &&
+                     task.ExecutorUserId == UserSession.CurrentUser.IdUser)
             {
                 vm.CanAction = true;
                 vm.ActionText = "Завершить";
@@ -138,6 +145,9 @@ namespace MyWarehouse.Pages
                     _db.CURS_DeliveryTasks.Add(newTask);
                     await _db.SaveChangesAsync();
                     await LoadActiveTasks();
+
+                    MessageBox.Show("Задача успешно создана!", "Успех",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
@@ -158,16 +168,27 @@ namespace MyWarehouse.Pages
 
                     if (task.TaskStatusId == (int)DeliveryTaskStatus.NotTaken)
                     {
+                        // Берем задачу в работу
                         task.TaskStatusId = (int)DeliveryTaskStatus.InProgress;
                         task.ExecutorUserId = UserSession.CurrentUser.IdUser;
+                        await _db.SaveChangesAsync();
                     }
-                    else if (task.TaskStatusId == (int)DeliveryTaskStatus.InProgress && task.ExecutorUserId == UserSession.CurrentUser.IdUser)
+                    else if (task.TaskStatusId == (int)DeliveryTaskStatus.InProgress &&
+                             task.ExecutorUserId == UserSession.CurrentUser.IdUser)
                     {
-                        task.TaskStatusId = (int)DeliveryTaskStatus.Completed;
+                        // Завершаем задачу с обработкой бизнес-логики
+                        var success = await _taskProcessor.CompleteTaskAsync(task.IdDeliveryTask);
+                        if (!success)
+                        {
+                            MessageBox.Show("Не удалось завершить задачу", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
                     }
 
-                    await _db.SaveChangesAsync();
                     await LoadActiveTasks();
+                    MessageBox.Show("Действие выполнено успешно!", "Успех",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
@@ -188,12 +209,13 @@ namespace MyWarehouse.Pages
                 {
                     try
                     {
-                        var task = await _db.CURS_DeliveryTasks.FindAsync(viewModel.Id);
-                        if (task == null) return;
-
-                        task.TaskStatusId = (int)DeliveryTaskStatus.Rejected;
-                        await _db.SaveChangesAsync();
-                        await LoadActiveTasks();
+                        var success = await _taskProcessor.CancelTaskAsync(viewModel.Id);
+                        if (success)
+                        {
+                            await LoadActiveTasks();
+                            MessageBox.Show("Задача отменена", "Успех",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -211,6 +233,7 @@ namespace MyWarehouse.Pages
         public string ProductName { get; set; } = string.Empty;
         public string ClientName { get; set; } = string.Empty;
         public string DeliveryTypeName { get; set; } = string.Empty;
+        public string OperationTypeName { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public DateTime CreatedAt { get; set; }
         public int TaskStatusId { get; set; }
