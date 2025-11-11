@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:MyWarehouse.Windows"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:MyWarehouse.ViewModels"
+    xmlns:viewmodels="clr-namespace:MyWarehouse.Models.ViewModels"
     Title="Добавить/Изменить задачу"
     Width="500"
     Height="450"
@@ -15,7 +15,7 @@
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        
+
     </Window.Resources>
 
     <Grid Margin="20">

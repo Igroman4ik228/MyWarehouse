@@ -1,9 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using MyWarehouse.Models.Entities;
-using MyWarehouse.Validation;
-using MyWarehouse.ViewModels;
+﻿using MyWarehouse.Models.Entities;
+using MyWarehouse.Models.ViewModels;
 using System.Windows;
-using System.Windows.Input;
 
 namespace MyWarehouse.Windows
 {

@@ -1,15 +1,13 @@
-﻿using MyWarehouse.Models.Entities;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using MyWarehouse.Models.Entities;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows;
 
-namespace MyWarehouse.ViewModels
+namespace MyWarehouse.Models.ViewModels
 {
-    public class AddEditTaskViewModel : INotifyPropertyChanged
+    public partial class AddEditTaskViewModel : BaseViewModel
     {
         private readonly AppDbContext _db;
-        private DeliveryTask _editingTask;
+        private readonly DeliveryTask _editingTask;
 
         public AddEditTaskViewModel(AppDbContext db, DeliveryTask task = null)
         {
@@ -23,154 +21,47 @@ namespace MyWarehouse.ViewModels
 
         #region Properties
 
+        [ObservableProperty]
         private ObservableCollection<Product> _products;
-        public ObservableCollection<Product> Products
-        {
-            get => _products;
-            set { _products = value; OnPropertyChanged(nameof(Products)); }
-        }
 
+        [ObservableProperty]
         private ObservableCollection<Client> _clients;
-        public ObservableCollection<Client> Clients
-        {
-            get => _clients;
-            set { _clients = value; OnPropertyChanged(nameof(Clients)); }
-        }
 
+        [ObservableProperty]
         private ObservableCollection<DeliveryType> _deliveryTypes;
-        public ObservableCollection<DeliveryType> DeliveryTypes
-        {
-            get => _deliveryTypes;
-            set { _deliveryTypes = value; OnPropertyChanged(nameof(DeliveryTypes)); }
-        }
 
+        [ObservableProperty]
         private ObservableCollection<Location> _locations;
-        public ObservableCollection<Location> Locations
-        {
-            get => _locations;
-            set { _locations = value; OnPropertyChanged(nameof(Locations)); }
-        }
 
+        [ObservableProperty]
         private Product _selectedProduct;
-        public Product SelectedProduct
-        {
-            get => _selectedProduct;
-            set
-            {
-                _selectedProduct = value;
-                OnPropertyChanged(nameof(SelectedProduct));
-                UpdateMaxQuantityInfo();
-                OnPropertyChanged(nameof(IsFormValid)); // Добавляем уведомление о валидности
-            }
-        }
 
+        [ObservableProperty]
         private Client _selectedClient;
-        public Client SelectedClient
-        {
-            get => _selectedClient;
-            set
-            {
-                _selectedClient = value;
-                OnPropertyChanged(nameof(SelectedClient));
-                OnPropertyChanged(nameof(IsFormValid));
-            }
-        }
 
+        [ObservableProperty]
         private DeliveryType _selectedDeliveryType;
-        public DeliveryType SelectedDeliveryType
-        {
-            get => _selectedDeliveryType;
-            set
-            {
-                _selectedDeliveryType = value;
-                OnPropertyChanged(nameof(SelectedDeliveryType));
-                UpdateLocationVisibility();
-                UpdateMaxQuantityInfo();
-                OnPropertyChanged(nameof(IsFormValid));
-            }
-        }
 
+        [ObservableProperty]
         private Location _selectedFromLocation;
-        public Location SelectedFromLocation
-        {
-            get => _selectedFromLocation;
-            set
-            {
-                _selectedFromLocation = value;
-                OnPropertyChanged(nameof(SelectedFromLocation));
-                UpdateMaxQuantityInfo();
-                OnPropertyChanged(nameof(IsFormValid));
-            }
-        }
 
+        [ObservableProperty]
         private Location _selectedToLocation;
-        public Location? SelectedToLocation
-        {
-            get => _selectedToLocation;
-            set
-            {
-                _selectedToLocation = value;
-                OnPropertyChanged(nameof(SelectedToLocation));
-                UpdateMaxQuantityInfo();
-                OnPropertyChanged(nameof(IsFormValid));
-            }
-        }
 
+        [ObservableProperty]
         private int _quantity;
-        public int Quantity
-        {
-            get => _quantity;
-            set
-            {
-                _quantity = value;
-                OnPropertyChanged(nameof(Quantity));
-                OnPropertyChanged(nameof(IsFormValid));
-            }
-        }
 
+        [ObservableProperty]
         private string _quantityText = "";
-        public string QuantityText
-        {
-            get => _quantityText;
-            set
-            {
-                _quantityText = value;
-                OnPropertyChanged(nameof(QuantityText));
 
-                if (int.TryParse(value, out int quantity))
-                {
-                    Quantity = quantity;
-                }
-                else
-                {
-                    Quantity = 0; // Если не число, устанавливаем 0
-                }
-
-                UpdateMaxQuantityInfo();
-                OnPropertyChanged(nameof(IsFormValid));
-            }
-        }
-
+        [ObservableProperty]
         private bool _isFromLocationVisible;
-        public bool IsFromLocationVisible
-        {
-            get => _isFromLocationVisible;
-            set { _isFromLocationVisible = value; OnPropertyChanged(nameof(IsFromLocationVisible)); }
-        }
 
+        [ObservableProperty]
         private bool _isToLocationVisible;
-        public bool IsToLocationVisible
-        {
-            get => _isToLocationVisible;
-            set { _isToLocationVisible = value; OnPropertyChanged(nameof(IsToLocationVisible)); }
-        }
 
+        [ObservableProperty]
         private string _maxQuantityInfo = "Выберите продукт и локации";
-        public string MaxQuantityInfo
-        {
-            get => _maxQuantityInfo;
-            set { _maxQuantityInfo = value; OnPropertyChanged(nameof(MaxQuantityInfo)); }
-        }
 
         // Свойство для проверки базовой валидности формы
         public bool IsFormValid
@@ -187,12 +78,9 @@ namespace MyWarehouse.ViewModels
                 // Проверка локаций в зависимости от типа доставки
                 return SelectedDeliveryType.IdDeliveryType switch
                 {
-                    // Внутренняя
-                    1 => SelectedFromLocation != null && SelectedToLocation != null,
-                    // Внешняя поставка
-                    2 => SelectedToLocation != null,
-                    // Выгрузка
-                    3 => SelectedFromLocation != null,
+                    (int)DeliveryOperationType.Moving => SelectedFromLocation != null && SelectedToLocation != null,
+                    (int)DeliveryOperationType.Incoming => SelectedToLocation != null,
+                    (int)DeliveryOperationType.Outgoing => SelectedFromLocation != null,
                     _ => false,
                 };
             }
@@ -220,6 +108,56 @@ namespace MyWarehouse.ViewModels
             SelectedToLocation = Locations?.FirstOrDefault(l => l.IdLocation == task.ToLocationId);
         }
 
+        partial void OnSelectedProductChanged(Product value)
+        {
+            UpdateMaxQuantityInfo();
+            OnPropertyChanged(nameof(IsFormValid));
+        }
+
+        partial void OnSelectedClientChanged(Client value)
+        {
+            OnPropertyChanged(nameof(IsFormValid));
+        }
+
+        partial void OnSelectedDeliveryTypeChanged(DeliveryType value)
+        {
+            UpdateLocationVisibility();
+            UpdateMaxQuantityInfo();
+            OnPropertyChanged(nameof(IsFormValid));
+        }
+
+        partial void OnSelectedFromLocationChanged(Location value)
+        {
+            UpdateMaxQuantityInfo();
+            OnPropertyChanged(nameof(IsFormValid));
+        }
+
+        partial void OnSelectedToLocationChanged(Location value)
+        {
+            UpdateMaxQuantityInfo();
+            OnPropertyChanged(nameof(IsFormValid));
+        }
+
+        partial void OnQuantityTextChanged(string value)
+        {
+            if (int.TryParse(value, out int quantity))
+            {
+                Quantity = quantity;
+            }
+            else
+            {
+                Quantity = 0; // Если не число, устанавливаем 0
+            }
+
+            UpdateMaxQuantityInfo();
+            OnPropertyChanged(nameof(IsFormValid));
+        }
+
+        partial void OnQuantityChanged(int value)
+        {
+            OnPropertyChanged(nameof(IsFormValid));
+        }
+
         private void UpdateLocationVisibility()
         {
             if (SelectedDeliveryType == null)
@@ -231,16 +169,16 @@ namespace MyWarehouse.ViewModels
 
             switch (SelectedDeliveryType.IdDeliveryType)
             {
-                case 1: // Внутренняя
+                case (int)DeliveryOperationType.Moving:
                     IsFromLocationVisible = true;
                     IsToLocationVisible = true;
                     break;
-                case 2: // Внешняя поставка
+                case (int)DeliveryOperationType.Incoming:
                     IsFromLocationVisible = false;
                     IsToLocationVisible = true;
                     SelectedFromLocation = null;
                     break;
-                case 3: // Выгрузка
+                case (int)DeliveryOperationType.Outgoing:
                     IsFromLocationVisible = true;
                     IsToLocationVisible = false;
                     SelectedToLocation = null;
@@ -267,7 +205,7 @@ namespace MyWarehouse.ViewModels
             }
 
             // Для внутренней доставки - показываем доступное количество на исходной локации
-            if (SelectedDeliveryType?.IdDeliveryType == 1 && SelectedFromLocation != null)
+            if (SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving && SelectedFromLocation != null)
             {
                 var stock = _db.CURS_Stocks
                     .FirstOrDefault(s => s.ProductId == SelectedProduct.IdProduct && s.LocationId == SelectedFromLocation.IdLocation);
@@ -285,7 +223,9 @@ namespace MyWarehouse.ViewModels
             }
 
             // Для целевой локации (внутренняя доставка и внешняя поставка) - показываем доступное место
-            if ((SelectedDeliveryType?.IdDeliveryType == 1 || SelectedDeliveryType?.IdDeliveryType == 2) && SelectedToLocation != null)
+            if ((SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving ||
+                 SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Incoming) &&
+                SelectedToLocation != null)
             {
                 var stock = _db.CURS_Stocks
                     .FirstOrDefault(s => s.ProductId == SelectedProduct.IdProduct && s.LocationId == SelectedToLocation.IdLocation);
@@ -305,16 +245,6 @@ namespace MyWarehouse.ViewModels
             }
 
             MaxQuantityInfo = "Выберите локации для отображения информации";
-        }
-
-        #endregion
-
-        #region INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion
