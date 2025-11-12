@@ -9,8 +9,8 @@
     xmlns:viewmodels="clr-namespace:MyWarehouse.Models.ViewModels"
     Title="Добавить/Изменить задачу"
     Width="500"
-    Height="450"
-    WindowStartupLocation="CenterScreen"
+    Height="400"
+    ResizeMode="NoResize"
     mc:Ignorable="d">
 
     <Window.Resources>

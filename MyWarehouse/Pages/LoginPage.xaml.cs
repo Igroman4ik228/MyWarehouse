@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Models.Entities;
 using MyWarehouse.Services;
 using System.Threading.Tasks;
@@ -50,7 +51,7 @@ namespace MyWarehouse.Pages
 
             UserSession.CurrentUser = user;
 
-            NavigationService.Navigate(new HomePage());
+            NavigationService.Navigate(App.ServiceProvider.GetService<HomePage>());
         }
 
         private void ShowError(string text)

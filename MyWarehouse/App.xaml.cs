@@ -28,6 +28,7 @@ namespace MyWarehouse
             services.AddDbContext<AppDbContext>(ServiceLifetime.Scoped);
 
             // Регистрируем страницы
+            services.AddTransient<HomePage>();
             services.AddTransient<TasksPage>();
             services.AddTransient<TasksHistoryPage>();
             services.AddTransient<ProductsPage>();

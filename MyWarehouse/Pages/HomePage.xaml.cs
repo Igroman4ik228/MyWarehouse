@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MyWarehouse.Models;
+using MyWarehouse.Models.Entities;
 using MyWarehouse.Services;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,15 +13,32 @@ namespace MyWarehouse.Pages
     /// </summary>
     public partial class HomePage : Page
     {
-        public bool IsAdmin = UserSession.IsAdmin;
+        private readonly AppDbContext _db;
 
-        public HomePage()
+        public HomePage(AppDbContext db)
         {
+            _db = db;
             InitializeComponent();
+
+            // Устанавливаем данные пользователя
             UserFirstNameTextBlock.Text = UserSession.CurrentUser.FirstName;
+            LoadUserRole();
 
             ShowProductsView();
         }
+
+        private async void LoadUserRole()
+        {
+            try
+            {
+                var role = await _db.CURS_Roles.FirstOrDefaultAsync(r => r.IdRole == UserSession.CurrentUser.RoleId) ?? throw new Exception("Неизвестная роль");
+                UserRoleTextBlock.Text = role.Name;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось загрузить данные роли: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        } 
 
         private void ShowProductsView()
         {
@@ -27,7 +47,16 @@ namespace MyWarehouse.Pages
 
         private void AdminPanel_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Открыть админ панель (только для админов).", "Админ панель", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (UserSession.IsAdmin)
+            {
+                // Здесь должна быть навигация на страницу админ панели
+                MessageBox.Show("Открытие админ панели...", "Админ панель", MessageBoxButton.OK, MessageBoxImage.Information);
+                // MainFrame.Navigate(App.ServiceProvider.GetService<AdminPage>());
+            }
+            else
+            {
+                MessageBox.Show("Недостаточно прав для доступа к админ панели.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void Tasks_Click(object sender, RoutedEventArgs e)
@@ -48,11 +77,6 @@ namespace MyWarehouse.Pages
         private void Clients_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(App.ServiceProvider.GetService<ClientsPage>());
-        }
-
-        private void MainFrame_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        {
-            MessageBox.Show("Загрузка завершена.", "Навигация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

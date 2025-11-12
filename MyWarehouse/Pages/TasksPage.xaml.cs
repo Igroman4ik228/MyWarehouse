@@ -22,6 +22,11 @@ namespace MyWarehouse.Pages
             _db = db;
             _taskProcessor = taskProcessor;
             InitializeComponent();
+
+            if (UserSession.IsAdmin) { 
+                AddButton.Visibility = Visibility.Visible;
+            }
+
             DataContext = this;
         }
 

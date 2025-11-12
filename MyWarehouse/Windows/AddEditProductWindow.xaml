@@ -9,6 +9,7 @@
     Width="800"
     Height="650"
     Loaded="Window_Loaded"
+    ResizeMode="NoResize"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 

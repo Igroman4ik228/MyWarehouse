@@ -49,7 +49,8 @@
                     x:Name="AddButton"
                     Margin="8,0,0,0"
                     Click="AddButton_Click"
-                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Visibility="Collapsed">
                     Добавить
                 </Button>
             </StackPanel>
