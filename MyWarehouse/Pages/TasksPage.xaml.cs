@@ -23,7 +23,7 @@ namespace MyWarehouse.Pages
             _taskProcessor = taskProcessor;
             InitializeComponent();
 
-            if (UserSession.IsAdmin) { 
+            if (UserSession.IsAdmin || UserSession.IsManager) { 
                 AddButton.Visibility = Visibility.Visible;
             }
 
