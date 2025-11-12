@@ -27,7 +27,7 @@ namespace MyWarehouse
             // Регистрируем DbContext с временем жизни Scoped (на уровне страницы)
             services.AddDbContext<AppDbContext>(ServiceLifetime.Scoped);
 
-            services.AddSingleton<AdminPanelWindow>();
+            services.AddTransient<AdminPanelWindow>();
 
             // Регистрируем страницы
             services.AddTransient<HomePage>();

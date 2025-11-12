@@ -3,15 +3,316 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MyWarehouse.Windows"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="AdminPanelWindow"
-    Width="1000"
-    Height="600"
+    Title="Админ-панель склада"
+    Width="1900"
+    Height="700"
     MinWidth="1000"
     MinHeight="600"
-    MaxWidth="2000"
-    MaxHeight="800"
     mc:Ignorable="d">
-    <Grid />
+
+    <Window.Resources>
+        <Style x:Key="DataGridStyle" TargetType="DataGrid">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesignBackground}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignDivider}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+            <Setter Property="ScrollViewer.PanningMode" Value="Both" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="CanUserAddRows" Value="True" />
+            <Setter Property="CanUserDeleteRows" Value="True" />
+            <Setter Property="CanUserReorderColumns" Value="True" />
+            <Setter Property="CanUserResizeColumns" Value="True" />
+            <Setter Property="CanUserSortColumns" Value="True" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="GridLinesVisibility" Value="None" />
+            <Setter Property="materialDesign:DataGridAssist.CellPadding" Value="8,4,8,4" />
+            <Setter Property="materialDesign:DataGridAssist.ColumnHeaderPadding" Value="8,4,8,4" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Заголовок  -->
+        <TextBlock
+            Grid.Row="0"
+            Margin="0,0,0,16"
+            HorizontalAlignment="Center"
+            Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
+            Text="Админ-панель управления складом" />
+
+        <!--  Табы с таблицами  -->
+        <TabControl Grid.Row="1" Style="{StaticResource MaterialDesignTabControl}">
+            <!--  Stocks  -->
+            <TabItem Header="Остатки склада">
+                <DataGrid
+                    x:Name="StocksDataGrid"
+                    ItemsSource="{Binding Stocks}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdStocks}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding ProductId}" Header="ID Продукта" />
+                        <DataGridTextColumn Binding="{Binding ProductQuantity}" Header="Количество" />
+                        <DataGridTextColumn Binding="{Binding LocationId}" Header="ID Локации" />
+                        <DataGridTextColumn Binding="{Binding MaxProductQuantity}" Header="Макс. количество" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Products  -->
+            <TabItem Header="Продукты">
+                <DataGrid
+                    x:Name="ProductsDataGrid"
+                    ItemsSource="{Binding Products}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdProduct}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Название" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="Описание" />
+                        <DataGridTextColumn Binding="{Binding CategoryId}" Header="ID Категории" />
+                        <DataGridTextColumn Binding="{Binding UnitId}" Header="ID Единицы" />
+                        <DataGridTextColumn Binding="{Binding Weight}" Header="Вес" />
+                        <DataGridTextColumn Binding="{Binding SKU}" Header="SKU" />
+                        <DataGridTextColumn Binding="{Binding ExpirationDate, StringFormat=dd.MM.yyyy}" Header="Срок годности" />
+                        <DataGridCheckBoxColumn Binding="{Binding IsFragile}" Header="Хрупкий" />
+                        <DataGridCheckBoxColumn Binding="{Binding IsWaterSensitive}" Header="Боится воды" />
+                        <DataGridTextColumn Binding="{Binding Length}" Header="Длина" />
+                        <DataGridTextColumn Binding="{Binding Width}" Header="Ширина" />
+                        <DataGridTextColumn Binding="{Binding Height}" Header="Высота" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Categories  -->
+            <TabItem Header="Категории">
+                <DataGrid
+                    x:Name="CategoriesDataGrid"
+                    ItemsSource="{Binding Categories}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdCategory}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Название" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="Описание" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Units  -->
+            <TabItem Header="Единицы измерения">
+                <DataGrid
+                    x:Name="UnitsDataGrid"
+                    ItemsSource="{Binding Units}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdUnit}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Название" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="Описание" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Locations  -->
+            <TabItem Header="Локации">
+                <DataGrid
+                    x:Name="LocationsDataGrid"
+                    ItemsSource="{Binding Locations}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdLocation}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding Shelf}" Header="Полка" />
+                        <DataGridTextColumn Binding="{Binding Cell}" Header="Ячейка" />
+                        <DataGridTextColumn Binding="{Binding Zone}" Header="Зона" />
+                        <DataGridTextColumn Binding="{Binding MaxLength}" Header="Макс. длина" />
+                        <DataGridTextColumn Binding="{Binding MaxWidth}" Header="Макс. ширина" />
+                        <DataGridTextColumn Binding="{Binding MaxHeight}" Header="Макс. высота" />
+                        <DataGridTextColumn Binding="{Binding MaxWeight}" Header="Макс. вес" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Clients  -->
+            <TabItem Header="Клиенты">
+                <DataGrid
+                    x:Name="ClientsDataGrid"
+                    ItemsSource="{Binding Clients}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdClient}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Имя" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="Описание" />
+                        <DataGridTextColumn Binding="{Binding Email}" Header="Email" />
+                        <DataGridTextColumn Binding="{Binding Phone}" Header="Телефон" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Delivery Tasks  -->
+            <TabItem Header="Задачи доставки">
+                <DataGrid
+                    x:Name="DeliveryTasksDataGrid"
+                    ItemsSource="{Binding DeliveryTasks}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdDeliveryTask}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding ProductId}" Header="ID Продукта" />
+                        <DataGridTextColumn Binding="{Binding ClientId}" Header="ID Клиента" />
+                        <DataGridTextColumn Binding="{Binding ProductQuantity}" Header="Количество" />
+                        <DataGridTextColumn Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Header="Дата создания" />
+                        <DataGridTextColumn Binding="{Binding CreatedUserId}" Header="ID Создателя" />
+                        <DataGridTextColumn Binding="{Binding TaskStatusId}" Header="ID Статуса" />
+                        <DataGridTextColumn Binding="{Binding DeliveryTypeId}" Header="ID Типа доставки" />
+                        <DataGridTextColumn Binding="{Binding ExecutorUserId}" Header="ID Исполнителя" />
+                        <DataGridTextColumn Binding="{Binding FromLocationId}" Header="ID Локации откуда" />
+                        <DataGridTextColumn Binding="{Binding ToLocationId}" Header="ID Локации куда" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Users  -->
+            <TabItem Header="Пользователи">
+                <DataGrid
+                    x:Name="UsersDataGrid"
+                    ItemsSource="{Binding Users}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdUser}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding FirstName}" Header="Имя" />
+                        <DataGridTextColumn Binding="{Binding LastName}" Header="Фамилия" />
+                        <DataGridTextColumn Binding="{Binding Login}" Header="Логин" />
+                        <DataGridTextColumn Binding="{Binding Password}" Header="Пароль" />
+                        <DataGridTextColumn Binding="{Binding RoleId}" Header="ID Роли" />
+                        <DataGridTextColumn Binding="{Binding Patronymic}" Header="Отчество" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Roles  -->
+            <TabItem Header="Роли">
+                <DataGrid
+                    x:Name="RolesDataGrid"
+                    ItemsSource="{Binding Roles}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdRole}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Название" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="Описание" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Delivery Types  -->
+            <TabItem Header="Типы доставки">
+                <DataGrid
+                    x:Name="DeliveryTypesDataGrid"
+                    ItemsSource="{Binding DeliveryTypes}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdDeliveryType}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Название" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="Описание" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <!--  Task Statuses  -->
+            <TabItem Header="Статусы задач">
+                <DataGrid
+                    x:Name="TaskStatusesDataGrid"
+                    ItemsSource="{Binding TaskStatuses}"
+                    Style="{StaticResource DataGridStyle}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Binding="{Binding IdTaskStatus}"
+                            Header="ID"
+                            IsReadOnly="True" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Название" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="Описание" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+        </TabControl>
+
+        <!--  Кнопка сохранения  -->
+        <StackPanel
+            Grid.Row="2"
+            Margin="0,16,0,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+
+            <Button
+                x:Name="SaveButton"
+                Margin="0,0,8,0"
+                Padding="16,8"
+                Click="SaveButton_Click"
+                Content="Сохранить все изменения"
+                Style="{StaticResource MaterialDesignRaisedButton}" />
+
+            <Button
+                Padding="16,8"
+                Click="RefreshButton_Click"
+                Content="Обновить данные"
+                Style="{StaticResource MaterialDesignOutlinedButton}" />
+        </StackPanel>
+    </Grid>
 </Window>
