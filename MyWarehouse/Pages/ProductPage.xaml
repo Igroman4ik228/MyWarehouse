@@ -91,7 +91,7 @@
 
             <!--  Left: Image + Highlights  -->
             <materialDesign:Card Grid.Column="0" Style="{StaticResource MaterialDesignOutlinedCard}">
-                <StackPanel Margin="12">
+                <StackPanel Margin="10">
                     <!--  Image placeholder
                     <Border
                         Height="200"
@@ -195,7 +195,7 @@
             <!--  Right: Details and stocks  -->
             <StackPanel Grid.Column="2" Orientation="Vertical">
                 <materialDesign:Card Style="{StaticResource MaterialDesignOutlinedCard}">
-                    <StackPanel Margin="12">
+                    <StackPanel Margin="10">
                         <TextBlock Style="{StaticResource MaterialDesignTitleMediumTextBlock}" Text="Места хранения" />
                         <TextBlock Margin="0,4,0,8" Foreground="Gray">Показаны текущие количества и ограничения. Количество / Максимум, ограничения разделены символом '/'.</TextBlock>
 

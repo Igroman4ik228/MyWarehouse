@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Models;
 using MyWarehouse.Models.Entities;
 using MyWarehouse.Services;
+using MyWarehouse.Windows;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -22,6 +23,10 @@ namespace MyWarehouse.Pages
 
             // Устанавливаем данные пользователя
             UserFirstNameTextBlock.Text = UserSession.CurrentUser.FirstName;
+            if (UserSession.IsAdmin)
+            {
+                AdminPanelButton.Visibility = Visibility.Visible;
+            }
             LoadUserRole();
 
             ShowProductsView();
@@ -50,8 +55,9 @@ namespace MyWarehouse.Pages
             if (UserSession.IsAdmin)
             {
                 // Здесь должна быть навигация на страницу админ панели
-                MessageBox.Show("Открытие админ панели...", "Админ панель", MessageBoxButton.OK, MessageBoxImage.Information);
-                // MainFrame.Navigate(App.ServiceProvider.GetService<AdminPage>());
+                var w = App.ServiceProvider.GetService<AdminPanelWindow>();
+
+                w?.Show();
             }
             else
             {

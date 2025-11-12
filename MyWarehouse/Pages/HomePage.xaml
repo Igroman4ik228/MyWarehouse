@@ -92,10 +92,12 @@
                     Content="Места" />
 
                 <Button
+                    x:Name="AdminPanelButton"
                     Background="Transparent"
                     BorderBrush="Transparent"
                     Click="AdminPanel_Click"
-                    Content="Админ панель" />
+                    Content="Админ панель"
+                    Visibility="Collapsed" />
 
                 <StackPanel Margin="0,16,0,0" VerticalAlignment="Bottom">
                     <TextBlock

@@ -51,13 +51,22 @@
         <DockPanel
             Grid.Row="0"
             Margin="0,0,0,8"
-            LastChildFill="True">
+            LastChildFill="False">
 
             <TextBlock
-                Grid.Row="0"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"
                 FontWeight="Bold"
                 Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
                 Text="Товары на складе" />
+
+            <!--  Поиск  -->
+            <TextBox
+                x:Name="SearchTextBox"
+                Width="200"
+                Margin="10,0,0,0"
+                materialDesign:HintAssist.Hint="Поиск товаров..."
+                TextChanged="SearchTextBox_TextChanged" />
 
             <StackPanel
                 HorizontalAlignment="Right"
@@ -74,7 +83,7 @@
         </DockPanel>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <ItemsControl d:ItemsSource="{StaticResource DesignProducts}" ItemsSource="{Binding Products}">
+            <ItemsControl d:ItemsSource="{StaticResource DesignProducts}" ItemsSource="{Binding FilteredProducts}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Margin="-4" Orientation="Horizontal" />
