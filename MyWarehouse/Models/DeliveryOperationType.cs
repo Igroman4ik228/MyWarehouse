@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MyWarehouse.Models;
 
-namespace MyWarehouse.Models
+public enum DeliveryOperationType
 {
-    public enum DeliveryOperationType
-    {
-        Moving = 1,
-        Incoming = 2,
-        Outgoing = 3,
-    }
+    Moving = 1,
+    Incoming = 2,
+    Outgoing = 3,
 }

@@ -15,6 +15,6 @@
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Grid>
-        <Frame NavigationUIVisibility="Hidden" Source="Pages/LoginPage.xaml" />
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
     </Grid>
 </Window>

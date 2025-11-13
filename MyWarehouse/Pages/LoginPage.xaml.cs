@@ -1,24 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using MyWarehouse.Models.Entities;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Services;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
 namespace MyWarehouse.Pages
 {
-    /// <summary>
-    /// Interaction logic for LoginPage.xaml
-    /// </summary>
     public partial class LoginPage : Page
     {
-        private readonly AppDbContext _db = new();
+        private readonly IAuthService _authService;
 
-        public LoginPage()
+        public LoginPage(IAuthService authService)
         {
             InitializeComponent();
+            _authService = authService;
             LoginBox.Focus();
         }
 
@@ -37,10 +32,9 @@ namespace MyWarehouse.Pages
                 return;
             }
 
+            var user = await Task.Run(() => _authService.AuthenticateAsync(login, password));
 
-            var user = await Task.Run(() => _db.CURS_Users.FirstOrDefaultAsync(u => u.Login == login));
-
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password)) 
+            if (user == null)
             {
                 ShowError("Неверный логин или пароль.");
                 PasswordBox.Clear();
@@ -50,7 +44,6 @@ namespace MyWarehouse.Pages
             }
 
             UserSession.CurrentUser = user;
-
             NavigationService.Navigate(App.ServiceProvider.GetService<HomePage>());
         }
 

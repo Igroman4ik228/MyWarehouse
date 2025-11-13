@@ -1,4 +1,5 @@
-﻿using MyWarehouse.Pages;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MyWarehouse.Pages;
 using System.Windows;
 
 namespace MyWarehouse
@@ -11,6 +12,7 @@ namespace MyWarehouse
         public MainWindow()
         {
             InitializeComponent();
+            MainFrame.Navigate(App.ServiceProvider.GetService<LoginPage>());
         }
     }
 }

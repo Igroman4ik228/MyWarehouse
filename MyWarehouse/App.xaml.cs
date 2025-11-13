@@ -1,7 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using MyWarehouse.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MyWarehouse.Models.Entities;
+using MyWarehouse.Models.ViewModels;
 using MyWarehouse.Pages;
 using MyWarehouse.Services;
 using MyWarehouse.Windows;
@@ -24,12 +23,19 @@ namespace MyWarehouse
 
         private static void ConfigureServices(ServiceCollection services)
         {
-            // Регистрируем DbContext с временем жизни Scoped (на уровне страницы)
             services.AddDbContext<AppDbContext>(ServiceLifetime.Scoped);
+
+            // Services
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<ITaskProcessingService, TaskProcessingService>();
+            services.AddTransient<IProductService, ProductService>();
+
+            services.AddTransient<ProductsPageViewModel>();
 
             services.AddTransient<AdminPanelWindow>();
 
             // Регистрируем страницы
+            services.AddTransient<LoginPage>();
             services.AddTransient<HomePage>();
             services.AddTransient<TasksPage>();
             services.AddTransient<TasksHistoryPage>();
@@ -37,7 +43,6 @@ namespace MyWarehouse
             services.AddTransient<ClientsPage>();
             services.AddTransient<LocationsPage>();
 
-            services.AddScoped<ITaskProcessingService, TaskProcessingService>();
         }
 
         protected override void OnExit(ExitEventArgs e)
