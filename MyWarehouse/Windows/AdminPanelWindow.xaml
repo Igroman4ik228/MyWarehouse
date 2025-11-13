@@ -224,7 +224,10 @@
                         <DataGridTextColumn Binding="{Binding FirstName}" Header="Имя" />
                         <DataGridTextColumn Binding="{Binding LastName}" Header="Фамилия" />
                         <DataGridTextColumn Binding="{Binding Login}" Header="Логин" />
-                        <DataGridTextColumn Binding="{Binding Password}" Header="Пароль" />
+                        <DataGridTextColumn
+                            materialDesign:HintAssist.HelperText="Пароль будет захеширован при сохранении"
+                            Binding="{Binding Password}"
+                            Header="Пароль" />
                         <DataGridTextColumn Binding="{Binding RoleId}" Header="ID Роли" />
                         <DataGridTextColumn Binding="{Binding Patronymic}" Header="Отчество" />
                     </DataGrid.Columns>

@@ -8,43 +8,27 @@ namespace MyWarehouse.Windows
 {
     public partial class AdminPanelWindow : Window
     {
-        private AppDbContext _db;
+        private readonly AppDbContext _db;
 
         // Коллекции для привязки данных
-        public ObservableCollection<Stock> Stocks { get; set; }
-        public ObservableCollection<Product> Products { get; set; }
-        public ObservableCollection<Category> Categories { get; set; }
-        public ObservableCollection<Unit> Units { get; set; }
-        public ObservableCollection<Location> Locations { get; set; }
-        public ObservableCollection<Client> Clients { get; set; }
-        public ObservableCollection<DeliveryTask> DeliveryTasks { get; set; }
-        public ObservableCollection<User> Users { get; set; }
-        public ObservableCollection<Role> Roles { get; set; }
-        public ObservableCollection<DeliveryType> DeliveryTypes { get; set; }
-        public ObservableCollection<Models.Entities.TaskStatus> TaskStatuses { get; set; }
+        public ObservableCollection<Stock> Stocks { get; set; } = [];
+        public ObservableCollection<Product> Products { get; set; } = [];
+        public ObservableCollection<Category> Categories { get; set; } = [];
+        public ObservableCollection<Unit> Units { get; set; } = [];
+        public ObservableCollection<Location> Locations { get; set; } = [];
+        public ObservableCollection<Client> Clients { get; set; } = [];
+        public ObservableCollection<DeliveryTask> DeliveryTasks { get; set; } = [];
+        public ObservableCollection<User> Users { get; set; } = [];
+        public ObservableCollection<Role> Roles { get; set; } = [];
+        public ObservableCollection<DeliveryType> DeliveryTypes { get; set; } = [];
+        public ObservableCollection<Models.Entities.TaskStatus> TaskStatuses { get; set; } = [];
 
         public AdminPanelWindow(AppDbContext db)
         {
             InitializeComponent();
             _db = db;
-            InitializeCollections();
             LoadData();
             DataContext = this;
-        }
-
-        private void InitializeCollections()
-        {
-            Stocks = new ObservableCollection<Stock>();
-            Products = new ObservableCollection<Product>();
-            Categories = new ObservableCollection<Category>();
-            Units = new ObservableCollection<Unit>();
-            Locations = new ObservableCollection<Location>();
-            Clients = new ObservableCollection<Client>();
-            DeliveryTasks = new ObservableCollection<DeliveryTask>();
-            Users = new ObservableCollection<User>();
-            Roles = new ObservableCollection<Role>();
-            DeliveryTypes = new ObservableCollection<DeliveryType>();
-            TaskStatuses = new ObservableCollection<Models.Entities.TaskStatus>();
         }
 
         private void LoadData()
@@ -196,9 +180,26 @@ namespace MyWarehouse.Windows
                 _db.CURS_DeliveryTasks.Add(deliveryTask);
             }
 
+            // Обрабатываем пользователей с хешированием паролей
             foreach (var user in Users.Where(u => u.IdUser == 0))
             {
+                // Хешируем пароль перед добавлением
+                if (!string.IsNullOrEmpty(user.Password))
+                {
+                    user.Password = HashPassword(user.Password);
+                }
                 _db.CURS_Users.Add(user);
+            }
+
+            // Обрабатываем существующих пользователей с измененными паролями
+            foreach (var user in Users.Where(u => u.IdUser > 0))
+            {
+                var existingUser = _db.CURS_Users.Local.FirstOrDefault(u => u.IdUser == user.IdUser);
+                if (existingUser != null && existingUser.Password != user.Password)
+                {
+                    // Если пароль изменился, хешируем новый пароль
+                    user.Password = HashPassword(user.Password);
+                }
             }
 
             foreach (var role in Roles.Where(r => r.IdRole == 0))
@@ -216,6 +217,10 @@ namespace MyWarehouse.Windows
                 _db.CURS_TaskStatuses.Add(taskStatus);
             }
         }
+
+        // Хешируем пароль с помощью BCrypt
+        private string HashPassword(string password) =>
+            BCrypt.Net.BCrypt.HashPassword(password);
 
         private string GetDetailedErrorMessage(DbUpdateException dbEx)
         {
