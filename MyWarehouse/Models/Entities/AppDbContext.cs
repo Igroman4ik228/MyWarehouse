@@ -5,6 +5,9 @@ using System.IO;
 namespace MyWarehouse.Models.Entities;
 public class AppDbContext : DbContext
 {
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AppDbContext() : base() { }
+
     public DbSet<Stock> CURS_Stocks { get; set; }
     public DbSet<Product> CURS_Products { get; set; }
     public DbSet<Category> CURS_Categories { get; set; }

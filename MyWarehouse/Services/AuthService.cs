@@ -13,7 +13,7 @@ namespace MyWarehouse.Services
     {
         private readonly AppDbContext _context = context;
 
-        async Task<User?> IAuthService.AuthenticateAsync(string login, string password)
+        public async Task<User?> AuthenticateAsync(string login, string password)
         {
             if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password))
                 return null;
