@@ -28,9 +28,10 @@ namespace MyWarehouse
             // Services
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ITaskProcessingService, TaskProcessingService>();
+            services.AddTransient<IProductDetailService, ProductDetailService>();
             services.AddTransient<IProductService, ProductService>();
 
-            services.AddTransient<ProductsPageViewModel>();
+            services.AddTransient<ProductsViewModel>();
 
             services.AddTransient<AdminPanelWindow>();
 

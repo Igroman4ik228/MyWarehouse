@@ -2,7 +2,9 @@
 
 namespace MyWarehouse.Models.ViewModels
 {
-    public class BaseViewModel : ObservableObject
+    public partial class BaseViewModel : ObservableObject
     {
+        [ObservableProperty]
+        private bool _isLoading;
     }
 }

@@ -7,21 +7,15 @@ using System.Windows;
 
 namespace MyWarehouse.Models.ViewModels
 {
-    public partial class ProductsPageViewModel : BaseViewModel
+    public partial class ProductsViewModel(IProductService productService) : BaseViewModel
     {
-        private readonly IProductService _productService;
+        private readonly IProductService _productService = productService;
 
         [ObservableProperty]
         private string _searchText = string.Empty;
 
-
         public ObservableCollection<ProductItemViewModel> Products { get; } = [];
         public ObservableCollection<ProductItemViewModel> FilteredProducts { get; } = [];
-
-        public ProductsPageViewModel(IProductService productService)
-        {
-            _productService = productService;
-        }
 
         [RelayCommand]
         private async Task LoadProductsAsync()

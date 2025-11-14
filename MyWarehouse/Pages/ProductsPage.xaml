@@ -63,8 +63,8 @@
             <!--  Поиск  -->
             <TextBox
                 x:Name="SearchTextBox"
-                Width="200"
-                Margin="10,0,0,0"
+                Width="300"
+                Margin="20,0,0,0"
                 materialDesign:HintAssist.Hint="Поиск товаров..."
                 TextChanged="SearchTextBox_TextChanged" />
 

@@ -1,58 +1,55 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MyWarehouse.Models.Entities;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace MyWarehouse.Models.ViewModels
 {
     public partial class AddEditTaskViewModel : BaseViewModel
     {
         private readonly AppDbContext _db;
-        private readonly DeliveryTask _editingTask;
 
-        public AddEditTaskViewModel(AppDbContext db, DeliveryTask task = null)
+        public AddEditTaskViewModel(AppDbContext db)
         {
             _db = db;
-            _editingTask = task;
             InitializeData();
-
-            if (task != null)
-                PopulateFromTask(task);
         }
 
         #region Properties
 
         [ObservableProperty]
-        private ObservableCollection<Product> _products;
+        private ObservableCollection<Product> _products = [];
 
         [ObservableProperty]
-        private ObservableCollection<Client> _clients;
+        private ObservableCollection<Client> _clients = [];
 
         [ObservableProperty]
-        private ObservableCollection<DeliveryType> _deliveryTypes;
+        private ObservableCollection<DeliveryType> _deliveryTypes = [];
 
         [ObservableProperty]
-        private ObservableCollection<Location> _locations;
+        private ObservableCollection<Location> _locations = [];
 
         [ObservableProperty]
-        private Product _selectedProduct;
+        private Product? _selectedProduct;
 
         [ObservableProperty]
-        private Client _selectedClient;
+        private Client? _selectedClient;
 
         [ObservableProperty]
-        private DeliveryType _selectedDeliveryType;
+        private DeliveryType? _selectedDeliveryType;
 
         [ObservableProperty]
-        private Location _selectedFromLocation;
+        private Location? _selectedFromLocation;
 
         [ObservableProperty]
-        private Location _selectedToLocation;
+        private Location? _selectedToLocation;
 
         [ObservableProperty]
         private int _quantity;
 
         [ObservableProperty]
-        private string _quantityText = "";
+        private string _quantityText = string.Empty;
 
         [ObservableProperty]
         private bool _isFromLocationVisible;
@@ -61,28 +58,25 @@ namespace MyWarehouse.Models.ViewModels
         private bool _isToLocationVisible;
 
         [ObservableProperty]
-        private string _maxQuantityInfo = "Выберите продукт и локации";
+        private string _maxQuantityInfo = string.Empty;
 
-        // Свойство для проверки базовой валидности формы
+        [ObservableProperty]
+        private string _validationMessage = string.Empty;
+
+        // Дополнительные свойства для валидации
+        private int _availableQuantity = 0;
+        private int _availableSpace = 0;
+        private bool _hasSourceStock = false;
+        private bool _hasDestinationStock = false;
+
+        // Свойство для проверки валидности формы
         public bool IsFormValid
         {
             get
             {
-                // Базовая проверка обязательных полей
-                if (SelectedProduct == null || SelectedClient == null || SelectedDeliveryType == null)
-                    return false;
-
-                if (Quantity <= 0)
-                    return false;
-
-                // Проверка локаций в зависимости от типа доставки
-                return SelectedDeliveryType.IdDeliveryType switch
-                {
-                    (int)DeliveryOperationType.Moving => SelectedFromLocation != null && SelectedToLocation != null,
-                    (int)DeliveryOperationType.Incoming => SelectedToLocation != null,
-                    (int)DeliveryOperationType.Outgoing => SelectedFromLocation != null,
-                    _ => false,
-                };
+                var validationResult = ValidateForm();
+                ValidationMessage = validationResult.ErrorMessage;
+                return validationResult.IsValid;
             }
         }
 
@@ -98,58 +92,156 @@ namespace MyWarehouse.Models.ViewModels
             Locations = new ObservableCollection<Location>(_db.CURS_Locations.ToList());
         }
 
-        private void PopulateFromTask(DeliveryTask task)
+        // Комплексная валидация формы
+        private ValidationResult ValidateForm()
         {
-            SelectedProduct = Products?.FirstOrDefault(p => p.IdProduct == task.ProductId);
-            SelectedClient = Clients?.FirstOrDefault(c => c.IdClient == task.ClientId);
-            SelectedDeliveryType = DeliveryTypes?.FirstOrDefault(d => d.IdDeliveryType == task.DeliveryTypeId);
-            QuantityText = task.ProductQuantity.ToString();
-            SelectedFromLocation = Locations?.FirstOrDefault(l => l.IdLocation == task.FromLocationId);
-            SelectedToLocation = Locations?.FirstOrDefault(l => l.IdLocation == task.ToLocationId);
+            // Базовая проверка обязательных полей
+            if (SelectedProduct == null)
+                return new ValidationResult("Выберите продукт");
+
+            if (SelectedClient == null)
+                return new ValidationResult("Выберите клиента");
+
+            if (SelectedDeliveryType == null)
+                return new ValidationResult("Выберите тип доставки");
+
+            // Проверка количества
+            if (Quantity <= 0)
+                return new ValidationResult("Количество должно быть больше 0");
+
+            if (Quantity > 1000000) // Разумное ограничение
+                return new ValidationResult("Количество слишком большое");
+
+            // Проверка локаций в зависимости от типа доставки
+            var locationValidation = ValidateLocations();
+            if (!locationValidation.IsValid)
+                return locationValidation;
+
+            // Проверка доступности товара и места
+            var stockValidation = ValidateStockAvailability();
+            if (!stockValidation.IsValid)
+                return stockValidation;
+
+            // Дополнительные бизнес-правила
+            var businessValidation = ValidateBusinessRules();
+            if (!businessValidation.IsValid)
+                return businessValidation;
+
+            return ValidationResult.Success;
         }
 
-        partial void OnSelectedProductChanged(Product value)
+        private ValidationResult ValidateLocations()
         {
-            UpdateMaxQuantityInfo();
+            return SelectedDeliveryType?.IdDeliveryType switch
+            {
+                (int)DeliveryOperationType.Moving =>
+                    SelectedFromLocation == null || SelectedToLocation == null
+                    ? new ValidationResult("Для перемещения должны быть выбраны исходная и целевая локации")
+                    : SelectedFromLocation.IdLocation == SelectedToLocation.IdLocation
+                    ? new ValidationResult("Исходная и целевая локации не могут совпадать")
+                    : ValidationResult.Success,
+
+                (int)DeliveryOperationType.Incoming =>
+                    SelectedToLocation == null
+                    ? new ValidationResult("Для поставки должна быть выбрана целевая локация")
+                    : ValidationResult.Success,
+
+                (int)DeliveryOperationType.Outgoing =>
+                    SelectedFromLocation == null
+                    ? new ValidationResult("Для отгрузки должна быть выбрана исходная локация")
+                    : ValidationResult.Success,
+
+                _ => new ValidationResult("Неизвестный тип доставки")
+            };
+        }
+
+        private ValidationResult ValidateStockAvailability()
+        {
+            if (SelectedProduct == null)
+                return ValidationResult.Success;
+
+            switch (SelectedDeliveryType?.IdDeliveryType)
+            {
+                case (int)DeliveryOperationType.Moving:
+                    if (!_hasSourceStock)
+                        return new ValidationResult("Товар отсутствует на исходной локации");
+
+                    if (Quantity > _availableQuantity)
+                        return new ValidationResult($"Недостаточно товара на исходной локации. Доступно: {_availableQuantity}");
+
+                    if (!_hasDestinationStock)
+                        return new ValidationResult("Товар отсутствует на целевой локации. Сначала нужно добавить товар на локацию");
+
+                    if (Quantity > _availableSpace)
+                        return new ValidationResult($"Недостаточно места на целевой локации. Доступно места: {_availableSpace}");
+                    break;
+
+                case (int)DeliveryOperationType.Incoming:
+                    if (Quantity > _availableSpace)
+                        return new ValidationResult($"Недостаточно места на целевой локации. Доступно места: {_availableSpace}");
+                    break;
+
+                case (int)DeliveryOperationType.Outgoing:
+                    if (!_hasSourceStock)
+                        return new ValidationResult("Товар отсутствует на исходной локации");
+
+                    if (Quantity > _availableQuantity)
+                        return new ValidationResult($"Недостаточно товара на исходной локации. Доступно: {_availableQuantity}");
+                    break;
+            }
+
+            return ValidationResult.Success;
+        }
+
+        private ValidationResult ValidateBusinessRules()
+        {
+            // Проверка срока годности (если применимо)
+            if (SelectedProduct?.ExpirationDate != null && SelectedProduct.ExpirationDate < DateTime.Now)
+                return new ValidationResult("Товар с истекшим сроком годности");
+
+            return ValidationResult.Success;
+        }
+
+        partial void OnSelectedProductChanged(Product? value)
+        {
+            UpdateStockInfo();
             OnPropertyChanged(nameof(IsFormValid));
         }
 
-        partial void OnSelectedClientChanged(Client value)
+        partial void OnSelectedClientChanged(Client? value)
         {
             OnPropertyChanged(nameof(IsFormValid));
         }
 
-        partial void OnSelectedDeliveryTypeChanged(DeliveryType value)
+        partial void OnSelectedDeliveryTypeChanged(DeliveryType? value)
         {
             UpdateLocationVisibility();
-            UpdateMaxQuantityInfo();
+            UpdateStockInfo();
             OnPropertyChanged(nameof(IsFormValid));
         }
 
-        partial void OnSelectedFromLocationChanged(Location value)
+        partial void OnSelectedFromLocationChanged(Location? value)
         {
-            UpdateMaxQuantityInfo();
+            UpdateStockInfo();
             OnPropertyChanged(nameof(IsFormValid));
         }
 
-        partial void OnSelectedToLocationChanged(Location value)
+        partial void OnSelectedToLocationChanged(Location? value)
         {
-            UpdateMaxQuantityInfo();
+            UpdateStockInfo();
             OnPropertyChanged(nameof(IsFormValid));
         }
 
         partial void OnQuantityTextChanged(string value)
         {
-            if (int.TryParse(value, out int quantity))
+            if (int.TryParse(value, out int quantity) && quantity >= 0)
             {
                 Quantity = quantity;
             }
             else
             {
-                Quantity = 0; // Если не число, устанавливаем 0
+                Quantity = 0;
             }
-
-            UpdateMaxQuantityInfo();
             OnPropertyChanged(nameof(IsFormValid));
         }
 
@@ -190,63 +282,101 @@ namespace MyWarehouse.Models.ViewModels
             }
         }
 
-        private void UpdateMaxQuantityInfo()
+        private void UpdateStockInfo()
         {
-            if (SelectedProduct == null)
-            {
-                MaxQuantityInfo = "Выберите продукт";
-                return;
-            }
+            _availableQuantity = 0;
+            _availableSpace = 0;
+            _hasSourceStock = false;
+            _hasDestinationStock = false;
 
-            if (_db == null)
+            // Получаем информацию об исходной локации
+            if (SelectedFromLocation != null &&
+                (SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving ||
+                 SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Outgoing))
             {
-                MaxQuantityInfo = "База данных не инициализирована";
-                return;
-            }
+                var sourceStock = _db.CURS_Stocks
+                    .FirstOrDefault(s => s.ProductId == SelectedProduct.IdProduct &&
+                                       s.LocationId == SelectedFromLocation.IdLocation);
 
-            // Для внутренней доставки - показываем доступное количество на исходной локации
-            if (SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving && SelectedFromLocation != null)
-            {
-                var stock = _db.CURS_Stocks
-                    .FirstOrDefault(s => s.ProductId == SelectedProduct.IdProduct && s.LocationId == SelectedFromLocation.IdLocation);
-
-                if (stock != null)
+                if (sourceStock != null)
                 {
-                    MaxQuantityInfo = $"Доступно на локации: {stock.ProductQuantity}";
-                    return;
-                }
-                else
-                {
-                    MaxQuantityInfo = "Товар отсутствует на выбранной локации";
-                    return;
+                    _hasSourceStock = true;
+                    _availableQuantity = sourceStock.ProductQuantity;
                 }
             }
 
-            // Для целевой локации (внутренняя доставка и внешняя поставка) - показываем доступное место
-            if ((SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving ||
-                 SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Incoming) &&
-                SelectedToLocation != null)
+            // Получаем информацию о целевой локации
+            if (SelectedToLocation != null &&
+                (SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving ||
+                 SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Incoming))
             {
-                var stock = _db.CURS_Stocks
-                    .FirstOrDefault(s => s.ProductId == SelectedProduct.IdProduct && s.LocationId == SelectedToLocation.IdLocation);
+                var destinationStock = _db.CURS_Stocks
+                    .FirstOrDefault(s => s.ProductId == SelectedProduct.IdProduct &&
+                                       s.LocationId == SelectedToLocation.IdLocation);
 
-                if (stock != null)
+                if (destinationStock != null)
                 {
-                    // Точный расчет: доступное место = MaxProductQuantity - текущее количество
-                    var availableSpace = stock.MaxProductQuantity - stock.ProductQuantity;
-                    MaxQuantityInfo = $"Доступно места на локации: {availableSpace} (из {stock.MaxProductQuantity})";
+                    _hasDestinationStock = true;
+                    _availableSpace = destinationStock.MaxProductQuantity - destinationStock.ProductQuantity;
                 }
-                else
-                {
-                    // Если товара еще нет на локации
-                    MaxQuantityInfo = $"Товара еще нет на локации";
-                }
-                return;
             }
 
-            MaxQuantityInfo = "Выберите локации для отображения информации";
+            // Обновляем информационное сообщение
+            UpdateMaxQuantityInfoMessage();
+        }
+
+        private void UpdateMaxQuantityInfoMessage()
+        {
+            var messages = new List<string>();
+
+            if (_hasSourceStock && (SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving ||
+                                   SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Outgoing))
+            {
+                messages.Add($"Доступно на исходной: {_availableQuantity}");
+            }
+            else if (SelectedFromLocation != null &&
+                    (SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving ||
+                     SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Outgoing))
+            {
+                messages.Add("Товар отсутствует на исходной локации");
+            }
+
+            if (_hasDestinationStock && (SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving ||
+                                        SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Incoming))
+            {
+                messages.Add($"Доступно места: {_availableSpace}");
+            }
+            else if (SelectedToLocation != null &&
+                    (SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Moving ||
+                     SelectedDeliveryType?.IdDeliveryType == (int)DeliveryOperationType.Incoming))
+            {
+                messages.Add("Товар отсутствует на целевой локации");
+            }
+
+            MaxQuantityInfo = messages.Count != 0 ? string.Join(" | ", messages) : string.Empty;
         }
 
         #endregion
+    }
+
+    // Вспомогательный класс для результатов валидации
+    public class ValidationResult
+    {
+        public bool IsValid { get; }
+        public string ErrorMessage { get; }
+
+        public ValidationResult(string errorMessage)
+        {
+            IsValid = false;
+            ErrorMessage = errorMessage;
+        }
+
+        private ValidationResult()
+        {
+            IsValid = true;
+            ErrorMessage = string.Empty;
+        }
+
+        public static ValidationResult Success { get; } = new ValidationResult();
     }
 }

@@ -16,35 +16,9 @@
 
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-
-        <local:ProductDetailViewModel
-            x:Key="DesignProduct"
-            Name="Стеклянная ваза"
-            Width="20"
-            Height="15"
-            Category="Декор"
-            Description="Красивая стеклянная ваза для цветов и декора."
-            IsFragile="True"
-            IsWaterSensitive="False"
-            Length="30"
-            SKU="VZ-001"
-            Weight="0.23">
-            <local:ProductDetailViewModel.Stocks>
-                <local:StockViewModel
-                    ConstraintsDisplay="50.00/40.00/30.00/100.00"
-                    LocationDetails="ID:101"
-                    LocationDisplay="Склад A / Полка 1 / Ячейка 3"
-                    QuantityDisplay="5 / 10" />
-                <local:StockViewModel
-                    ConstraintsDisplay="60.00/50.00/40.00/120.00"
-                    LocationDetails="ID:202"
-                    LocationDisplay="Склад B / Полка 2 / Ячейка 1"
-                    QuantityDisplay="3 / 10" />
-            </local:ProductDetailViewModel.Stocks>
-        </local:ProductDetailViewModel>
     </Page.Resources>
 
-    <Grid d:DataContext="{StaticResource DesignProduct}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -116,7 +90,7 @@
                     <TextBlock
                         Margin="0,4,0,0"
                         Foreground="Gray"
-                        Text="{Binding SKU, StringFormat=Артикул: {0}}" />
+                        Text="{Binding Sku, StringFormat=Артикул: {0}}" />
 
                     <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
                         <materialDesign:PackIcon
