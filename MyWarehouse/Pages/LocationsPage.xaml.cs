@@ -44,6 +44,9 @@ namespace MyWarehouse.Pages
             InitializeComponent();
             _db = db;
             DataContext = this;
+
+            if (UserSession.IsManager || UserSession.IsAdmin)
+                ActionsDataGridTemplateColumn.Visibility = Visibility.Visible;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)

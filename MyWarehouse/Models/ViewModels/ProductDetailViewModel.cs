@@ -45,6 +45,12 @@ namespace MyWarehouse.Models.ViewModels
 
         public ObservableCollection<StockViewModel> Stocks { get; } = [];
 
+        public Product? Product { get; private set; }
+        public ICollection<DeliveryTask>? MovementHistory { get; private set; }
+
+        public bool CanExportCurrentData => Product != null;
+        public bool CanExportFullHistory => Product != null && MovementHistory?.Count != 0;
+
         [RelayCommand]
         public async Task LoadProductAsync()
         {
@@ -52,23 +58,24 @@ namespace MyWarehouse.Models.ViewModels
             {
                 IsLoading = true;
 
-                var product = await _productDetailService.GetProductWithDetailsAsync(_productId);
+                Product = await _productDetailService.GetProductWithDetailsAsync(_productId);
+                MovementHistory = await _productDetailService.GetProductMovementHistoryAsync(_productId);
 
-                if (product == null)
+                if (Product == null)
                     return;
 
-                Name = product.Name;
-                Sku = product.SKU;
-                Category = product.Category.Name;
-                Weight = product.Weight;
-                Length = product.Length;
-                Width = product.Width;
-                Height = product.Height;
-                IsFragile = product.IsFragile;
-                IsWaterSensitive = product.IsWaterSensitive;
-                Description = product.Description ?? string.Empty;
+                Name = Product.Name;
+                Sku = Product.SKU;
+                Category = Product.Category.Name;
+                Weight = Product.Weight;
+                Length = Product.Length;
+                Width = Product.Width;
+                Height = Product.Height;
+                IsFragile = Product.IsFragile;
+                IsWaterSensitive = Product.IsWaterSensitive;
+                Description = Product.Description ?? "Описание отсутствует";
 
-                UpdateStocksAsync(product);
+                UpdateStocksAsync(Product);
             }
             catch (Exception ex)
             {

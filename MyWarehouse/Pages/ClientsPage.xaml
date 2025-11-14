@@ -205,7 +205,11 @@
                 </DataGridTemplateColumn>
 
                 <!--  Actions Column  -->
-                <DataGridTemplateColumn Width="Auto" Header="Действия">
+                <DataGridTemplateColumn
+                    x:Name="ActionsDataGridTemplateColumn"
+                    Width="Auto"
+                    Header="Действия"
+                    Visibility="Collapsed">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

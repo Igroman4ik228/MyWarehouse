@@ -46,6 +46,42 @@
                     Style="{StaticResource MaterialDesignOutlinedButton}">
                     Обновить
                 </Button>
+
+                <!--  Кнопка экспорта с контекстным меню  -->
+                <Button
+                    x:Name="ExportPdfButton"
+                    Margin="8,0,0,0"
+                    Click="ExportPdfButton_Click"
+                    Style="{StaticResource MaterialDesignOutlinedButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon VerticalAlignment="Center" Kind="FileExport" />
+                        <TextBlock Margin="4,0,0,0" Text="Экспорт в PDF" />
+                        <materialDesign:PackIcon
+                            Width="16"
+                            Height="16"
+                            Margin="4,0,0,0"
+                            VerticalAlignment="Center"
+                            Kind="ChevronDown" />
+                    </StackPanel>
+
+                    <!--  Контекстное меню для выбора типа экспорта  -->
+                    <Button.ContextMenu>
+                        <ContextMenu x:Name="ExportContextMenu" Placement="Bottom">
+                            <MenuItem
+                                Click="ExportCurrentDataMenuItem_Click"
+                                Header="Экспорт текущих данных"
+                                Style="{StaticResource MaterialDesignMenuItem}"
+                                ToolTip="Экспортирует текущее состояние товара" />
+                            <MenuItem
+                                Click="ExportFullHistoryMenuItem_Click"
+                                Header="Экспорт полной истории"
+                                Style="{StaticResource MaterialDesignMenuItem}"
+                                ToolTip="Экспортирует историю перемещений товара" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+
+
                 <Button
                     Margin="8,0,0,0"
                     Click="CloseButton_Click"

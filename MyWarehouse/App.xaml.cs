@@ -30,6 +30,7 @@ namespace MyWarehouse
             services.AddTransient<ITaskProcessingService, TaskProcessingService>();
             services.AddTransient<IProductDetailService, ProductDetailService>();
             services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IPdfExportService, PdfExportService>();
 
             services.AddTransient<ProductsViewModel>();
 

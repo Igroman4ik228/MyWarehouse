@@ -14,14 +14,16 @@ namespace MyWarehouse.Pages
     {
         private readonly AppDbContext _context;
         private readonly IProductDetailService _productDetailService;
+        private readonly IPdfExportService _pdfExportService;
         private readonly ProductsViewModel _viewModel;
 
-        public ProductsPage(AppDbContext context, IProductService productService, IProductDetailService productDetailService)
+        public ProductsPage(AppDbContext context, IProductService productService, IProductDetailService productDetailService, IPdfExportService pdfExportService)
         {
             InitializeComponent();
 
             _context = context;
             _productDetailService = productDetailService;
+            _pdfExportService = pdfExportService;
             _viewModel = new ProductsViewModel(productService);
             DataContext = _viewModel;
         }
@@ -41,7 +43,7 @@ namespace MyWarehouse.Pages
         {
             if (sender is Button button && button.DataContext is ProductItemViewModel product)
             {
-                NavigationService.Navigate(new ProductPage(product.Id, _productDetailService));
+                NavigationService.Navigate(new ProductPage(product.Id, _productDetailService, _pdfExportService));
             }
         }
 
