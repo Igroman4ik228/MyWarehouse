@@ -34,6 +34,13 @@
                 Style="{StaticResource MaterialDesignTitleLargeTextBlock}"
                 Text="Активные задачи" />
 
+            <TextBox
+                x:Name="SearchTextBox"
+                Width="300"
+                Margin="20,0,0,0"
+                materialDesign:HintAssist.Hint="Поиск задачи..."
+                TextChanged="SearchTextBox_TextChanged" />
+
             <StackPanel
                 HorizontalAlignment="Right"
                 DockPanel.Dock="Right"
@@ -64,7 +71,7 @@
             <ItemsControl
                 x:Name="TasksPanel"
                 HorizontalAlignment="Stretch"
-                ItemsSource="{Binding Tasks}">
+                ItemsSource="{Binding FilteredTasks}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel

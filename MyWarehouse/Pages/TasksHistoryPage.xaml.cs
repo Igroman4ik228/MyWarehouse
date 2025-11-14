@@ -12,6 +12,7 @@ namespace MyWarehouse.Pages
     {
         private readonly AppDbContext _db;
         public ObservableCollection<HistoryTaskViewModel> Tasks { get; } = [];
+        public ObservableCollection<HistoryTaskViewModel> FilteredTasks { get; } = [];
 
         public TasksHistoryPage(AppDbContext db)
         {
@@ -44,11 +45,37 @@ namespace MyWarehouse.Pages
                 {
                     Tasks.Add(CreateHistoryTaskViewModel(task));
                 }
+
+                ApplySearchFilter();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки истории: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ApplySearchFilter()
+        {
+            var searchText = SearchTextBox.Text?.Trim().ToLower();
+
+            FilteredTasks.Clear();
+
+            var filtered = string.IsNullOrWhiteSpace(searchText)
+                ? Tasks
+                : Tasks.Where(t =>
+                    t.ProductName.ToLower().Contains(searchText) ||
+                    t.ClientName.ToLower().Contains(searchText) ||
+                    (t.ExecutorName?.ToLower().Contains(searchText) ?? false) ||
+                    t.DeliveryTypeName.ToLower().Contains(searchText) ||
+                    t.TaskStatusName.ToLower().Contains(searchText) ||
+                    (t.FromLocationName?.ToLower().Contains(searchText) ?? false) ||
+                    (t.ToLocationName?.ToLower().Contains(searchText) ?? false)
+                );
+
+            foreach (var task in filtered)
+            {
+                FilteredTasks.Add(task);
             }
         }
 
@@ -97,11 +124,17 @@ namespace MyWarehouse.Pages
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             Tasks.Clear();
+            FilteredTasks.Clear();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService?.GoBack();
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplySearchFilter();
         }
     }
 
