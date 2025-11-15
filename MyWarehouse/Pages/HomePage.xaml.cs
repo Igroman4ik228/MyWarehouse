@@ -94,5 +94,10 @@ namespace MyWarehouse.Pages
         {
             MainFrame.Navigate(App.ServiceProvider.GetService<ClientsPage>());
         }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(App.ServiceProvider.GetService<LoginPage>());
+        }
     }
 }

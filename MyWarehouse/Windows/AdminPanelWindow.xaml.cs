@@ -117,6 +117,9 @@ namespace MyWarehouse.Windows
                 DeliveryTypesDataGrid.CommitEdit();
                 TaskStatusesDataGrid.CommitEdit();
 
+                // Обрабатываем удаленные записи
+                ProcessDeletedEntries();
+
                 // Обрабатываем новые записи
                 ProcessNewEntries();
 
@@ -139,6 +142,36 @@ namespace MyWarehouse.Windows
             {
                 MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ProcessDeletedEntries()
+        {
+            // Находим и удаляем записи, которые были удалены из DataGrid
+            ProcessDeletedEntriesForTable(_db.CURS_Stocks.Local, Stocks);
+            ProcessDeletedEntriesForTable(_db.CURS_Products.Local, Products);
+            ProcessDeletedEntriesForTable(_db.CURS_Categories.Local, Categories);
+            ProcessDeletedEntriesForTable(_db.CURS_Units.Local, Units);
+            ProcessDeletedEntriesForTable(_db.CURS_Locations.Local, Locations);
+            ProcessDeletedEntriesForTable(_db.CURS_Clients.Local, Clients);
+            ProcessDeletedEntriesForTable(_db.CURS_DeliveryTasks.Local, DeliveryTasks);
+            ProcessDeletedEntriesForTable(_db.CURS_Users.Local, Users);
+            ProcessDeletedEntriesForTable(_db.CURS_Roles.Local, Roles);
+            ProcessDeletedEntriesForTable(_db.CURS_DeliveryTypes.Local, DeliveryTypes);
+            ProcessDeletedEntriesForTable(_db.CURS_TaskStatuses.Local, TaskStatuses);
+        }
+
+        private void ProcessDeletedEntriesForTable<T>(IEnumerable<T> dbSet, ObservableCollection<T> collection) where T : class
+        {
+            var dbItems = dbSet.ToList();
+            var collectionItems = collection.ToList();
+
+            // Находим элементы, которые есть в базе, но отсутствуют в коллекции
+            var deletedItems = dbItems.Except(collectionItems).ToList();
+
+            foreach (var deletedItem in deletedItems)
+            {
+                _db.Set<T>().Remove(deletedItem);
             }
         }
 

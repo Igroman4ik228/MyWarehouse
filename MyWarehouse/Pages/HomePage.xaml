@@ -117,6 +117,17 @@
                         FontWeight="SemiBold"
                         Foreground="#FFECB365"
                         Text="{Binding UserRole}" />
+
+                    <Button
+                        x:Name="LogoutButton"
+                        Width="100"
+                        Height="25"
+                        Margin="0,20,0,0"
+                        Click="LogoutButton_Click"
+                        Content="Выход"
+                        FontSize="12"
+                        Style="{StaticResource MaterialDesignOutlinedLightButton}" />
+
                 </StackPanel>
             </StackPanel>
         </StackPanel>

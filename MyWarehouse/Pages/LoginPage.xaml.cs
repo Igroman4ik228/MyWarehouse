@@ -45,6 +45,8 @@ namespace MyWarehouse.Pages
 
             UserSession.CurrentUser = user;
             NavigationService.Navigate(App.ServiceProvider.GetService<HomePage>());
+            LoginBox.Clear();
+            LoginButton.IsEnabled = true;
         }
 
         private void ShowError(string text)
