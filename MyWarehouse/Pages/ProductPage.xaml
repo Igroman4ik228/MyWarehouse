@@ -172,25 +172,27 @@
                     </StackPanel>
 
                     <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Foreground="Gray"
+                            Text="Особенности" />
                         <materialDesign:PackIcon
                             Width="24"
                             Height="24"
                             Margin="0,0,6,0"
                             Foreground="Orange"
-                            Kind="AlertOutline"
+                            Kind="GlassFragile"
+                            ToolTip="Хрупкий"
                             Visibility="{Binding IsFragile, Converter={StaticResource BoolToVis}}" />
                         <materialDesign:PackIcon
                             Width="24"
                             Height="24"
                             Margin="0,0,6,0"
                             Foreground="Blue"
-                            Kind="Water"
+                            Kind="WaterAlert"
+                            ToolTip="Боится воды"
                             Visibility="{Binding IsWaterSensitive, Converter={StaticResource BoolToVis}}" />
-                        <TextBlock
-                            Margin="6,0,0,0"
-                            VerticalAlignment="Center"
-                            Foreground="Gray"
-                            Text="Особенности" />
+
                     </StackPanel>
 
                     <TextBlock
