@@ -39,7 +39,7 @@
                 x:Name="SearchTextBox"
                 Width="300"
                 Margin="20,0,0,0"
-                materialDesign:HintAssist.Hint="Поиск по товарам..."
+                materialDesign:HintAssist.Hint="Поиск по истории задач..."
                 TextChanged="SearchTextBox_TextChanged" />
 
             <StackPanel

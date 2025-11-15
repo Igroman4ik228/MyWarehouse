@@ -171,14 +171,11 @@ namespace MyWarehouse.Models.ViewModels
                     break;
 
                 case (int)DeliveryOperationType.Incoming:
-                    if (Quantity > _availableSpace)
+                    if (_hasDestinationStock && Quantity > _availableSpace)
                         return new ValidationResult($"Недостаточно места на целевой локации. Доступно места: {_availableSpace}");
                     break;
 
                 case (int)DeliveryOperationType.Outgoing:
-                    if (!_hasSourceStock)
-                        return new ValidationResult("Товар отсутствует на исходной локации");
-
                     if (Quantity > _availableQuantity)
                         return new ValidationResult($"Недостаточно товара на исходной локации. Доступно: {_availableQuantity}");
                     break;

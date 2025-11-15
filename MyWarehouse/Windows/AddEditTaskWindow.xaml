@@ -7,7 +7,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="clr-namespace:MyWarehouse.Models.ViewModels"
-    Title="Добавить/Изменить задачу"
+    Title="Добавить задачу"
     Width="500"
     Height="500"
     ResizeMode="NoResize"
@@ -40,7 +40,7 @@
             FontSize="20"
             FontWeight="Bold"
             Style="{StaticResource MaterialDesignHeadlineSmallTextBlock}"
-            Text="Добавление / редактирование задачи" />
+            Text="Добавление задачи" />
 
         <!--  Клиент  -->
         <StackPanel
